@@ -70,7 +70,7 @@ class MetadataXML19139Fixer(object):
         # input folder
         if not path.isdir(self.fold_in):
             try:
-                mkdir(self.fold_in, "0o777")
+                mkdir(self.fold_in, 0o777)
             except Exception as e:
                 logger.error(e)
                 sys.exit()
@@ -90,7 +90,7 @@ class MetadataXML19139Fixer(object):
         # output folder
         if not path.isdir(self.fold_out):
             try:
-                mkdir(self.fold_out, "0o777")
+                mkdir(self.fold_out, 0o777)
             except Exception as e:
                 logger.error(e)
                 sys.exit()
