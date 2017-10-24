@@ -137,3 +137,10 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+
+
+# Custom
+# =========================
+
+# input and output files
+*.xml
