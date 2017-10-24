@@ -142,5 +142,8 @@ $RECYCLE.BIN/
 # Custom
 # =========================
 
+# virtual environments
+virtenv*
+
 # input and output files
 *.xml
