@@ -48,6 +48,7 @@ logger.info("Python version: {}"
 
 # customize script
 ds_creation_date = "2017-09-08"
+ds_srs_code = "urn:ogc:def:crs:EPSG:2154"
 
 # #############################################################################
 # ########### Classes #############
@@ -164,6 +165,33 @@ class MetadataXML19139Fixer(object):
         sub_ci_date_typecode.set("codeListValue", "creation")
         sub_ci_date_typecode.text = "creation"
 
+    def fix_srs(self):
+        """Fix Spatial Reference System.
+
+        Under /MD_Metadata/referenceSystemInfo/MD_ReferenceSystem/referenceSystemIdentifier/RS_Identifier
+        <referenceSystemInfo>
+            <MD_ReferenceSystem>
+                <referenceSystemIdentifier>
+                    <RS_Identifier>
+                        <code>
+                            <gco:CharacterString>urn:ogc:def:crs:EPSG:2154</gco:CharacterString>
+                        </code>
+                    </RS_Identifier>
+                </referenceSystemIdentifier>
+            </MD_ReferenceSystem>
+        </referenceSystemInfo>
+        """
+        rs_identifier = self.get_rs_identifier()
+        # fix SRS syntax
+        code = rs_identifier.find("gmd:code/gco:CharacterString",
+                                  self.ns)
+        code.text = ds_srs_code
+
+        # remove useless codeSpace
+        code_space = rs_identifier.find("gmd:codeSpace",
+                                        self.ns)
+        rs_identifier.remove(code_space)
+
     # -------- Methods to get XML parts --------------------------------------
 
     def get_identification_info(self):
@@ -176,8 +204,19 @@ class MetadataXML19139Fixer(object):
 
     def get_md_ci_citation(self):
         """Get CI_Citation level items."""
-        pth_ci_citation = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation"
+        pth_ci_citation = "gmd:identificationInfo/"\
+                          "gmd:MD_DataIdentification/"\
+                          "gmd:citation/gmd:CI_Citation"
         return self.tpl_root.find(pth_ci_citation,
+                                  self.ns)
+
+    def get_rs_identifier(self):
+        """Get RS_Identifier level items."""
+        pth_rs_identifer = "gmd:referenceSystemInfo/"\
+                           "gmd:MD_ReferenceSystem/"\
+                           "gmd:referenceSystemIdentifier/"\
+                           "gmd:RS_Identifier"
+        return self.tpl_root.find(pth_rs_identifer,
                                   self.ns)
 
     # -------- XML utilis ----------------------------------------------------
@@ -205,6 +244,8 @@ if __name__ == '__main__':
             app.tpl_root = app.tpl.getroot()
             # creation date
             app.add_ds_creation_date()
+            # fix SRS
+            app.fix_srs()
 
             # # namespaces
             # for ns in app.ns:
