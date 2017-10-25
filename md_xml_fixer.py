@@ -5,9 +5,10 @@ from __future__ import (absolute_import, print_function, unicode_literals)
 
 # -----------------------------------------------------------------------------
 # Name:         Metadata XML fixer
-# Purpose:      Check
-# Python:       2.7.x
-# Author:       Julien Moura (https://github.com/Guts)
+# Purpose:      Add missing elements to XML ISO19139 files
+# Python:       3.5+
+# Author:       Julien Moura
+# Source:       https://github.com/Guts/iso19139_xml_fixer
 # Created:      08/09/2017
 # -----------------------------------------------------------------------------
 
