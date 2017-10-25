@@ -201,6 +201,38 @@ class MetadataXML19139Fixer(object):
                                         self.ns)
         rs_identifier.remove(code_space)
 
+    def fix_cgus(self):
+        """Add dataset usage conditions and limitations into metadata XML.
+
+        Under /MD_Metadata/identificationInfo/MD_DataIdentification/resourceConstraints
+
+        <resourceConstraints>
+            <MD_Constraints>
+                <useLimitation>
+                    <gmx:Anchor xl:href="http://www.etalab.gouv.fr/licence-ouverte-open-licence" xl:title="Licence ouverte ETALAB 1.0" />
+                </useLimitation>
+                <useLimitation>
+                    <gco:CharacterString>Conditions sur [geopaysdebrest.fr &gt; Usage des données](https://geo.pays-de-brest.fr/usages/Pages/default.aspx).</gco:CharacterString>
+                </useLimitation>
+            </MD_Constraints>
+        </resourceConstraints>
+        <resourceConstraints>
+            <MD_LegalConstraints>
+                <useLimitation>
+                    <gco:CharacterString>Pas de restriction d’accès public selon INSPIRE</gco:CharacterString>
+                </useLimitation>
+                <useLimitation>
+                    <gco:CharacterString>Conditions sur [geopaysdebrest.fr &gt; Usage des données](https://geo.pays-de-brest.fr/usages/Pages/default.aspx).</gco:CharacterString>
+                </useLimitation>
+                <accessConstraints>
+                    <MD_RestrictionCode codeList="http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/codelist/gmxCodelists.xml#MD_RestrictionCode" codeListValue="license">license</MD_RestrictionCode>
+                </accessConstraints>
+            </MD_LegalConstraints>
+        </resourceConstraints>
+        """
+        md_data_identification = self.get_md_data_identification()
+        
+
     # -------- Methods to get XML parts --------------------------------------
 
     def get_md_data_identification(self):
