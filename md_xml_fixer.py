@@ -47,6 +47,7 @@ logger.info("Python version: {}"
             .format(sys.version_info))
 
 # customize script
+ds_character_set = "utf-8"
 ds_creation_date = "2017-09-08"
 ds_srs_code = "urn:ogc:def:crs:EPSG:2154"
 
@@ -122,7 +123,7 @@ class MetadataXML19139Fixer(object):
     def add_ds_creation_date(self):
         """Add metadata creation date into metadata XML.
 
-        Under /MD_Metadata/identificationInfo/MD_DataIdentification/citation/CI_Citation/date):
+        Under /MD_Metadata/identificationInfo/MD_DataIdentification/citation/CI_Citation/date
         <date>
             <CI_Date>
                 <date>
@@ -134,24 +135,8 @@ class MetadataXML19139Fixer(object):
             </CI_Date>
         </date>
         """
-        # date = ET.SubElement(elem, "<gmd:date>")
         ci_citation = self.get_md_ci_citation()
-        # quicky way - NOT WORKING :'(
-        # in_date = '''
-        # <gmd:date gco="http://www.isotc211.org/2005/gco" gmd="http://www.isotc211.org/2005/gmd">
-        #     <gmd:CI_Date>
-        #         <gmd:date>
-        #             <gco:Date>{}Z</gco:Date>
-        #         </gmd:date>
-        #         <gmd:dateType>
-        #             <gmd:CI_DateTypeCode codeList="http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/codelist/ML_gmxCodelists.xml#CI_DateTypeCode" codeListValue="creation">creation</gmd:CI_DateTypeCode>
-        #         </gmd:dateType>
-        #     </gmd:CI_Date>
-        # </gmd:date>
-        # '''.format(ds_creation_date)
-        # ET.SubElement(ci_citation, in_date)
-
-        # fastidious way - WORKING
+        # creating sub element structure
         parent_date = ET.SubElement(ci_citation, "gmd:date")
         ci_date = ET.SubElement(parent_date, "gmd:CI_date")
         sub_date = ET.SubElement(ci_date, "gmd:date")
@@ -164,6 +149,29 @@ class MetadataXML19139Fixer(object):
         sub_ci_date_typecode.set("codeList", "http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/codelist/ML_gmxCodelists.xml#CI_DateTypeCode")
         sub_ci_date_typecode.set("codeListValue", "creation")
         sub_ci_date_typecode.text = "creation"
+
+    def add_md_character_set(self):
+        """Add metadata creation date into metadata XML.
+
+        Under /MD_Metadata/characterSet
+        AND /MD_Metadata/identificationInfo/MD_DataIdentification/characterSet
+        <characterSet>
+            <MD_CharacterSetCode codeList="http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/codelist/ML_gmxCodelists.xml#MD_CharacterSetCode" codeListValue="utf8">utf-8</MD_CharacterSetCode>
+        </characterSet>
+        """
+        # metadata root
+        char_set = ET.SubElement(self.tpl_root, "gmd:characterSet")
+        sub_char_set_code = ET.SubElement(char_set, "gmd:MD_CharacterSetCode")
+        sub_char_set_code.set("codeList", "http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/codelist/ML_gmxCodelists.xml#MD_CharacterSetCode")
+        sub_char_set_code.set("codeListValue", "utf8")
+        sub_char_set_code.text = ds_character_set
+        # data identification
+        md_data_identification = self.get_md_data_identification()
+        char_set = ET.SubElement(md_data_identification, "gmd:characterSet")
+        sub_char_set_code = ET.SubElement(char_set, "gmd:MD_CharacterSetCode")
+        sub_char_set_code.set("codeList", "http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/codelist/ML_gmxCodelists.xml#MD_CharacterSetCode")
+        sub_char_set_code.set("codeListValue", "utf8")
+        sub_char_set_code.text = ds_character_set
 
     def fix_srs(self):
         """Fix Spatial Reference System.
@@ -194,13 +202,12 @@ class MetadataXML19139Fixer(object):
 
     # -------- Methods to get XML parts --------------------------------------
 
-    def get_identification_info(self):
-        """Get XML main first levels items."""
-        for i in self.tpl_root.findall('gmd:identificationInfo',
-                                       self.ns):
-            self.idenfo = i
-
-        return self.idenfo
+    def get_md_data_identification(self):
+        """Get Character_set level items."""
+        pth_character_set = "gmd:identificationInfo/"\
+                            "gmd:MD_DataIdentification"
+        return self.tpl_root.find(pth_character_set,
+                                  self.ns)
 
     def get_md_ci_citation(self):
         """Get CI_Citation level items."""
@@ -242,10 +249,10 @@ if __name__ == '__main__':
             app.tpl = ET.parse(in_xml)
             # getting the elements and sub-elements structure
             app.tpl_root = app.tpl.getroot()
-            # creation date
-            app.add_ds_creation_date()
-            # fix SRS
-            app.fix_srs()
+            # fixes
+            app.add_ds_creation_date()  # creation date
+            app.add_md_character_set()  # character set
+            app.fix_srs()   # SRS
 
             # # namespaces
             # for ns in app.ns:
