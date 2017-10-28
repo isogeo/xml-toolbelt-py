@@ -44,13 +44,16 @@ logfile = RotatingFileHandler("LOG_XML_FIXER.log", "a", 5000000, 1)
 logfile.setLevel(logging.DEBUG)
 logfile.setFormatter(log_form)
 logger.addHandler(logfile)
+logger.info("============ START ================")
 logger.info("Python version: {}"
             .format(sys.version_info))
 
 # customize script
 ds_character_set = "utf-8"
-ds_creation_date = "2017-09-08"
+ds_creation_date = "2015-09-08"
 ds_srs_code = "urn:ogc:def:crs:EPSG:2154"
+ds_license_lbl = "Licence ouverte ETALAB 1.0"
+ds_license_url = "http://www.etalab.gouv.fr/licence-ouverte-open-licence"
 
 # #############################################################################
 # ########### Classes #############
@@ -230,8 +233,21 @@ class MetadataXML19139Fixer(object):
             </MD_LegalConstraints>
         </resourceConstraints>
         """
-        md_data_identification = self.get_md_data_identification()
-        
+        rs_ident = self.get_md_data_identification()
+        rs_constraints = self.get_rs_constraints()
+        # clean up before adding
+        if rs_constraints:
+            for i in rs_constraints:
+                rs_ident.remove(i)
+        else:
+            pass
+        # add new constraints
+        constraint_use = ET.SubElement(rs_ident, "gmd:resourceConstraints")
+        md_constraint = ET.SubElement(constraint_use, "gmd:MD_Constraints")
+        use_limit = ET.SubElement(md_constraint, "gmd:useLimitation")
+        use_anchor = ET.SubElement(use_limit, "{http://www.isotc211.org/2005/gmx}Anchor")
+        use_anchor.set("{http://www.w3.org/1999/xlink}title", ds_license_lbl)
+        use_anchor.set("{http://www.w3.org/1999/xlink}href", ds_license_url)
 
     # -------- Methods to get XML parts --------------------------------------
 
@@ -259,7 +275,15 @@ class MetadataXML19139Fixer(object):
         return self.tpl_root.find(pth_rs_identifer,
                                   self.ns)
 
-    # -------- XML utilis ----------------------------------------------------
+    def get_rs_constraints(self):
+        """Get resourceConstraints level items."""
+        pth_rs_constraints = "gmd:identificationInfo/"\
+                             "gmd:MD_DataIdentification/"\
+                             "gmd:resourceConstraints"
+        return self.tpl_root.findall(pth_rs_constraints,
+                                     self.ns)
+
+    # -------- XML utils ----------------------------------------------------
 
     def prettify(self, elem):
         """Return a pretty-printed XML string for the Element."""
@@ -286,6 +310,7 @@ if __name__ == '__main__':
             app.add_ds_creation_date()  # creation date
             app.add_md_character_set()  # character set
             app.fix_srs()   # SRS
+            app.fix_cgus()   # CGUs
 
             # # namespaces
             # for ns in app.ns:
