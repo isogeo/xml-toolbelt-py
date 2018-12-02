@@ -7,8 +7,22 @@
 #     pip install -r requirements.txt
 #
 
-# before install python dependencies, you need the ppa ubuntugis activated and some libraries installed on your os:
-# python-setuptools, python-pip, python-dev, python-tk, python-gdal, python-software-properties
 
-# via pypi
-gisdata
+# basics
+setuptools
+wheel
+
+# XML parsing
+lxml==4.2.5
+
+# command-line
+Click==7.0
+
+# utils
+arrow==0.12.*
+python-dateutil==2.7.5
+
+# dev
+autopep8==1.4.3
+codecov==2.0.15
+pylint==1.9.3
