@@ -147,3 +147,6 @@ virtenv*
 
 # input and output files
 *.xml
+
+# credentials files
+client_secrets.json
