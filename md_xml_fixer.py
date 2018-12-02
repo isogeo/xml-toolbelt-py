@@ -1,6 +1,6 @@
-#! python3
-#! /usr/bin/python
 # -*- coding: UTF-8 -*-
+#! python3
+
 from __future__ import (absolute_import, print_function, unicode_literals)
 
 # -----------------------------------------------------------------------------
