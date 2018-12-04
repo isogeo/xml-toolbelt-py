@@ -67,7 +67,7 @@ def parse_string_for_max_date(dates_as_str):
 # #############################################################################
 # ########## Classes ###############
 # ##################################
-class MD:
+class MetadataIso19139:
     """
     metadata with unit test methods
     """
@@ -215,5 +215,5 @@ if __name__ == "__main__":
     li_fixtures_xml = sorted(Path(r"tests/fixtures").glob("**/*.xml"))
     li_fixtures_xml += sorted(Path(r"input").glob("**/*.xml"))
     for xml in li_fixtures_xml:
-        test = MD(xml=os.path.normpath(xml))
+        test = MetadataIso19139(xml=os.path.normpath(xml))
         print(test.asDict().get("title"), test.asDict().get("srs"))
