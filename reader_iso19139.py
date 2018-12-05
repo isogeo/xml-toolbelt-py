@@ -23,6 +23,7 @@ import os
 from pathlib import Path
 
 # 3rd party library
+import arrow
 from lxml import etree
 import dateutil.parser
 
@@ -56,7 +57,7 @@ def parse_string_for_max_date(dates_as_str):
         for date_str in dates_as_str.split(","):
             date_str = date_str.strip()
             if date_str != "":
-                date_python = dateutil.parser.parse(date_str, ignoretz=True)
+                date_python = arrow.get(date_str)
                 dates_python.append(date_python)
         if len(dates_python) > 0:
             return max(dates_python)

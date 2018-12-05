@@ -15,8 +15,6 @@ from recommonmark.parser import CommonMarkParser
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
 import os
-import sys
-sys.path.insert(0, os.path.abspath('.'))
 
 # -- Build environment -----------------------------------------------------
 on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
