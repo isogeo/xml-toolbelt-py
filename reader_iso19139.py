@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 #! python3
 
-
 """
     Isogeo XML Fixer - Metadata
 
@@ -16,8 +15,6 @@
 
 # standard library
 import datetime
-import hashlib
-import json
 import logging
 import os
 from pathlib import Path
@@ -25,7 +22,6 @@ from pathlib import Path
 # 3rd party library
 import arrow
 from lxml import etree
-import dateutil.parser
 
 # #############################################################################
 # ########## Globals ###############
@@ -41,14 +37,11 @@ logging.basicConfig(level=logging.INFO)
 # #############################################################################
 # ########## Functions #############
 # ##################################
-def xmlGetTextNodes(doc, xpath, namespaces):
+def xmlGetTextNodes(doc: etree._ElementTree, xpath: str, namespaces: dict):
     """
     Shorthand to retrieve serialized text nodes matching a specific xpath
     """
-    return ", ".join(doc.xpath(xpath, namespaces={
-        "gmd": "http://www.isotc211.org/2005/gmd",
-        "gco": "http://www.isotc211.org/2005/gco"
-    }))
+    return ", ".join(doc.xpath(xpath, namespaces=namespaces))
 
 
 def parse_string_for_max_date(dates_as_str):
@@ -62,7 +55,7 @@ def parse_string_for_max_date(dates_as_str):
         if len(dates_python) > 0:
             return max(dates_python)
     except:
-        logging.error("date parsing error : " +dates_as_str)
+        logging.error("date parsing error : " + dates_as_str)
         return None
 
 # #############################################################################
@@ -74,8 +67,14 @@ class MetadataIso19139:
     """
     def __init__(self, xml):
         self.namespaces = {
+            "gts": "http://www.isotc211.org/2005/gts",
+            "gml": "http://www.opengis.net/gml",
+            "xsi": "http://www.w3.org/2001/XMLSchema-instance",
+            "gco": "http://www.isotc211.org/2005/gco",
             "gmd": "http://www.isotc211.org/2005/gmd",
-            "gco": "http://www.isotc211.org/2005/gco"
+            "gmx": "http://www.isotc211.org/2005/gmx",
+            "srv": "http://www.isotc211.org/2005/srv",
+            "xl": "http://www.w3.org/1999/xlink"
         }
         self.bbox = []
         self.xml = xml
@@ -216,5 +215,5 @@ if __name__ == "__main__":
     li_fixtures_xml = sorted(Path(r"tests/fixtures").glob("**/*.xml"))
     li_fixtures_xml += sorted(Path(r"input").glob("**/*.xml"))
     for xml in li_fixtures_xml:
-        test = MetadataIso19139(xml=os.path.normpath(xml))
+        test = MetadataIso19139(xml=str(xml.resolve()))
         print(test.asDict().get("title"), test.asDict().get("srs"))
