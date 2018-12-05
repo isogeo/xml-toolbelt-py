@@ -27,6 +27,7 @@ from lxml import etree
 
 # modules
 from reader_iso19139 import MetadataIso19139
+from reader_iso19110 import MetadataIso19110
 
 # #############################################################################
 # ########## Globals ###############
@@ -71,6 +72,11 @@ def list_metadata_folder(folder: str, kind: str = "geosource") -> tuple:
             continue
         # check if required subfolders are present
         if not check_folder_structure(subfolder):
+            logging.info("Folder ignored because of bad structure.")
+            continue
+        # check if required metadata.xml is present
+        if not get_md_path(subfolder):
+            logging.info("Folder ignored because of missing metadata file.")
             continue
         # append to the list
         li_metadata_folders.append(subfolder.resolve())
@@ -91,6 +97,8 @@ def get_md_global_info(folder: str) -> tuple:
 
     :param str folder: path to the folder where to look for the info.xml file.
     """
+    # get metadata path
+    md_path = get_md_path(folder)
     # get info file
     info_path = folder / "info.xml"
     if not info_path.is_file():
@@ -115,7 +123,7 @@ def get_md_global_info(folder: str) -> tuple:
                     for x in l_files_priv
                     if Path(folder / "private" / x.get("name")).is_file()])
 
-    return (cat_uuid, md_type, l_files)
+    return (cat_uuid, md_path, md_type, l_files)
 
 
 def get_md_path(folder: str) -> tuple:
@@ -133,13 +141,24 @@ def get_md_path(folder: str) -> tuple:
 
     return md_path.resolve()
 
-def get_md_title(metadata_path: str) -> tuple:
+def get_md_title(metadata_path: str, metadata_type: str="iso19139") -> tuple:
     """Extract required information from the info.xml expected to be at the
     root fo each metadata folder.
 
     :param str metadata_path: path to the metadata.
+    :param str metadata_type: type of metadata. iso19139 or iso19110.
     """
-    pass
+    # lxml needs a str not a Path
+    if isinstance(metadata_path, Path):
+        metadata_path =  str(metadata_path)
+    # according to the ISO format
+    if metadata_type=="iso19139":
+        return MetadataIso19139(xml=metadata_path).title
+    elif metadata_type=="iso19110":
+        return MetadataIso19110(xml=metadata_path).name
+    else:
+        logging.info("Metadata type not supported: {}".format(metadata_type))
+        pass
 
 
 # #############################################################################
@@ -160,6 +179,11 @@ def cli_switch_from_geosource(input_dir, output_dir):
     d_metadata = {i: get_md_global_info(i)
                   for i in li_metadata_folders}
 
+    # parse dict
+    for i in d_metadata:
+        #print(d_metadata.get(i)[1])
+        print(d_metadata.get(i)[2], get_md_title(
+            d_metadata.get(i)[1], d_metadata.get(i)[2]))
 
 # #############################################################################
 # ### Stand alone execution #######
