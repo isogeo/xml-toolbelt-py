@@ -1,0 +1,12 @@
+{
+    "python.pythonPath": "C:\\Users\\julien.moura\\.virtualenvs\\iso19139_xml_fixer-Jl-kKthK\\Scripts\\python.exe",
+    "python.unitTest.unittestArgs": [
+        "-v",
+        "-s",
+        "./tests",
+        "-p",
+        "test*.py"
+    ],
+    "python.unitTest.unittestEnabled": true,
+    "python.autoComplete.addBrackets": true
+}
