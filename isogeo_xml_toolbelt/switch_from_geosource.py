@@ -96,6 +96,14 @@ def get_md_global_info(folder: str) -> tuple:
     root fo each metadata folder.
 
     :param str folder: path to the folder where to look for the info.xml file.
+    
+    Structure of the returned tuple:
+
+        (catalog UUID,
+         absolute path to the metadata.xml,
+         metadata type (ISO number),
+         list of absolute paths to attached files   
+         )
     """
     # get metadata path
     md_path = get_md_path(folder)
