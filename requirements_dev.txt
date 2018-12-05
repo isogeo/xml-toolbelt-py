@@ -8,15 +8,11 @@
 #
 
 
-# basics
-setuptools
-wheel
+# doc
+sphinx==1.8.*
+recommonmark
 
-# XML parsing
-lxml==4.2.5
-
-# command-line
-Click==7.0
-
-# utils
-arrow==0.12.*
+# code art
+autopep8==1.4.*
+codecov==2.0.*
+pylint==1.9.*

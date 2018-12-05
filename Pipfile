@@ -7,11 +7,12 @@ verify_ssl = true
 codecov = "*"
 pylint = "*"
 autopep8 = "*"
+sphinx = "*"
+recommonmark = "*"
 
 [packages]
 lxml = "*"
 click = "*"
-python-dateutil = "*"
 arrow = "*"
 
 [requires]
