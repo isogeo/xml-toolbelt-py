@@ -20,7 +20,7 @@ import sys
 import unittest
 
 # modules
-from reader_iso19110 import MetadataIso19110
+from isogeo_xml_toolbelt.reader_iso19110 import MetadataIso19110
 
 # #############################################################################
 # ######## Globals #################
@@ -54,7 +54,10 @@ class TestReaderIso19110(unittest.TestCase):
         """Check reader"""
         # loop on fixtures
         for i in self.li_fixtures_repo:
-            md = MetadataIso19110(str(i.resolve()))
-            self.assertEqual(md.asDict().get("name"), md.name)
-            self.assertEqual(md.asDict().get("title"), md.name)
+            md = MetadataIso19110(i.resolve())
+            # self.assertEqual(md.asDict().get("name"), md.name)
+            # self.assertEqual(md.asDict().get("title"), md.name)
+            # print(md.name)
+            # print(md.filename)
             print(md.name)
+            print(md.featureTypes)
