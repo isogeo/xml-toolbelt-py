@@ -133,10 +133,19 @@ class MetadataIso19139(object):
             self.namespaces)
 
         # vector or raster
-        self.storageType = xmlGetTextNodes(
+        self.storageType = self.get_dataset_type(self.md)
+
+
+        # format
+        self.formatName = xmlGetTextNodes(
             self.md,
-            "/gmd:MD_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:spatialRepresentationType/gmd:MD_SpatialRepresentationTypeCode/text()",
+            "/gmd:MD_Metadata/gmd:distributionInfo/gmd:MD_Distribution/gmd:distributionFormat/gmd:MD_Format/gmd:name/gco:CharacterString/text()",
             self.namespaces)
+        self.formatVersion = xmlGetTextNodes(
+            self.md,
+            "/gmd:MD_Metadata/gmd:distributionInfo/gmd:MD_Distribution/gmd:distributionFormat/gmd:MD_Format/gmd:version/gco:CharacterString/text()",
+            self.namespaces)
+
 
         # date or datetime ?
         dates_str = xmlGetTextNodes(
@@ -214,19 +223,41 @@ class MetadataIso19139(object):
             "gmd:referenceSystemIdentifier/gmd:RS_Identifier/gmd:codeSpace/gco:CharacterString/text()",
             self.namespaces)
 
+        # feature count
+        self.featureCount = xmlGetTextNodes(
+            self.md,
+            "/gmd:MD_Metadata/gmd:spatialRepresentationInfo/gmd:MD_VectorSpatialRepresentation/gmd:geometricObjects/gmd:MD_GeometricObjects/gmd:geometricObjectCount/gco:Integer/text()",
+            self.namespaces)
+
         # feature catalogs
         self.featureCatalogs = xmlGetTextNodes(
             self.md,
             "/gmd:MD_Metadata/gmd:contentInfo[19]/gmd:MD_FeatureCatalogueDescription/gmd:featureCatalogueCitation/text()",
             self.namespaces)
 
-
+    # -- METHODS --------------------------------------------------------------
     def __repr__(self):
         return self.fileIdentifier
         
     def __str__(self):
         return self.fileIdentifier
-    
+
+    def get_dataset_type(self, doc):
+        """Determines if dataset is a vector / raster / service / sertires or not defined"""
+        storageType = xmlGetTextNodes(
+            doc,
+            "/gmd:MD_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:spatialRepresentationType/gmd:MD_SpatialRepresentationTypeCode/text()",
+            self.namespaces)
+        if len(storageType) < 1:
+            storageType = doc.xpath("/gmd:MD_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:spatialRepresentationType/gmd:MD_SpatialRepresentationTypeCode", namespaces=self.namespaces)
+            if len(storageType) > 0:
+                storageType = storageType[0].get("codeListValue", None)
+
+        return storageType
+
+
+
+
     def asDict(self):
         return {
             "filename": self.filename,
@@ -237,6 +268,9 @@ class MetadataIso19139(object):
             "OrganisationName": self.OrganisationName,
             "abstract": self.abstract,
             "parentidentifier": self.parentIdentifier,
+            "type": self.storageType,
+            "formatName": self.formatName,
+            "formatVersion": self.formatVersion,
             "date": self.date,
             "contact": self.contact,
             "srs": "{}:{}".format(self.srs_codeSpace, self.srs_code),
@@ -244,6 +278,7 @@ class MetadataIso19139(object):
             "latmax": self.latmax,
             "lonmin": self.lonmin,
             "lonmax": self.lonmax,
+            "featureCount": self.featureCount,
             "featureCatalogs": self.featureCatalogs
         }
         
@@ -258,5 +293,5 @@ if __name__ == "__main__":
     li_fixtures_xml += sorted(Path(r"input").glob("**/*.xml"))
     for xml_path in li_fixtures_xml:
         test = MetadataIso19139(xml=xml_path)
-        print(test.asDict().get("title"), test.asDict().get("srs"))
-        print(test.storageType)
+        #print(test.asDict().get("title"), test.asDict().get("srs"))
+        print(xml_path.resolve(), test.storageType)

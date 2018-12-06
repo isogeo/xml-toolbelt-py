@@ -17,8 +17,9 @@
 # standard library
 import logging
 from os import path, rename, walk
-import shutil
 from pathlib import Path
+import re
+import shutil
 from uuid import UUID
 
 # 3rd party library
@@ -149,25 +150,25 @@ def get_md_path(folder: str) -> tuple:
 
     return md_path.resolve()
 
-def get_md_title(metadata_path: str, metadata_type: str="iso19139") -> tuple:
-    """Extract required information from the info.xml expected to be at the
-    root fo each metadata folder.
+def get_metadata(metadata_path: str, metadata_type: str="iso19139") -> tuple:
+    """Load metadata as an object and get required information (title, SRS...).
 
     :param str metadata_path: path to the metadata.
     :param str metadata_type: type of metadata. iso19139 or iso19110.
     """
-    # lxml needs a str not a Path
-    if isinstance(metadata_path, Path):
-        metadata_path =  str(metadata_path)
-    # according to the ISO format
+    # load depending on the ISO format
     if metadata_type == "iso19139":
-        return MetadataIso19139(xml=metadata_path).title
+        md = MetadataIso19139(xml=metadata_path)
+        d_md = {"title": md.title, }
     elif metadata_type == "iso19110":
-        return MetadataIso19110(xml=metadata_path).name
+        md = MetadataIso19110(xml=metadata_path)
+        d_md = {"title": md.name, }
     else:
-        logging.info("Metadata type not supported: {}".format(metadata_type))
-        pass
+        logging.warning("Metadata type not supported: {}".format(metadata_type))
+        return False
 
+    # 
+    return  d_md
 
 # #############################################################################
 # ####### Command-line ############
@@ -199,16 +200,20 @@ def cli_switch_from_geosource(input_dir, output_dir):
         #print(d_metadata.get(i)[0], d_metadata.get(i)[2])
 
         # ensure that the dest folder is created
-        output_dir.joinpath(d_metadata.get(i)[0], d_metadata.get(i)[
-                            2]).mkdir(parents=True, exist_ok=True)
+        dest_dir = output_dir.joinpath(d_metadata.get(i)[0], d_metadata.get(i)[2])
+        dest_dir.mkdir(parents=True, exist_ok=True)
         # format output filename
-        md_title = get_md_title(d_metadata.get(i)[1], d_metadata.get(i)[2])
+        md = get_metadata(d_metadata.get(i)[1], d_metadata.get(i)[2])
+        if not md:
+            continue
+        md_title = md.get("title")
         if not md_title:
             md_title = "NoTitle"
-            logging.info("Title is missing: {}".format(i.name))
+            logging.warning("Title is missing: {}".format(d_metadata.get(i)[1]))
+        dest_filename = dest_dir.joinpath(re.sub(r"[^\w\-_\. ]", "", md_title) + ".xml")
         # copy
-        
-
+        #print(dest_filename.resolve())
+        shutil.copy(str(d_metadata.get(i)[1]), str(dest_filename.resolve()))
 
 
 # #############################################################################
