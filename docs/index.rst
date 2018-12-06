@@ -17,6 +17,12 @@ Welcome to Isogeo - XML Toolbelt's documentation!
 :Source code: https://github.com/Isogeo/isogeo-api-py-minsdk/
 :Issues: https://github.com/Isogeo/isogeo-api-py-minsdk/issues
 
+Package modules
++++++++++++++++
+
+.. toctree::
+    _apidoc/modules
+
 Indices and tables
 ==================
 

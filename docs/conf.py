@@ -14,7 +14,14 @@ from recommonmark.parser import CommonMarkParser
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
+from datetime import date
 import os
+import sys
+
+sys.path.insert(0, os.path.abspath(r'..'))
+
+
+from isogeo_xml_toolbelt import *
 
 # -- Build environment -----------------------------------------------------
 on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
@@ -22,12 +29,12 @@ on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
 
 # -- Project information -----------------------------------------------------
 
-project = 'Isogeo - XML Toolbelt'
-copyright = '2018, Isogeo'
 author = 'Isogeo'
+project = 'Isogeo - XML Toolbelt'
+copyright = u'2016 - {0}, {1}'.format(date.today().year, author)
 
 # The short X.Y version
-version = ''
+version = '2018.12'
 # The full version, including alpha/beta/rc tags
 release = ''
 
@@ -82,7 +89,7 @@ pygments_style = 'sphinx'
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'alabaster'
+html_theme = 'default'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -187,3 +194,22 @@ epub_exclude_files = ['search.html']
 
 # If true, `todo` and `todoList` produce output, else they produce nothing.
 todo_include_todos = True
+
+# -- Options for Sphinx API doc ----------------------------------------------
+# run api doc
+def run_apidoc(_):
+    from sphinx.ext.apidoc import main
+
+    cur_dir = os.path.normpath(os.path.dirname(__file__))
+    output_path = os.path.join(cur_dir, '_apidoc')
+    modules = os.path.normpath(os.path.join(cur_dir, "../isogeo_xml_toolbelt"))
+    exclusions = [
+        '../isogeo_pysdk/input',
+        '../isogeo_pysdk/output',
+    ]
+    main(['-e', '-f', '-M', '-o', output_path, modules] + exclusions)
+
+# launch setup
+def setup(app):
+    app.connect('builder-inited', run_apidoc)
+
