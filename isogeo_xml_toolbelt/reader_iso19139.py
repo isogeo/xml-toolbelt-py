@@ -18,6 +18,7 @@ import datetime
 import logging
 import os
 from pathlib import Path
+from uuid import UUID
 
 # 3rd party library
 import arrow
@@ -38,13 +39,21 @@ logging.basicConfig(level=logging.INFO)
 # ########## Functions #############
 # ##################################
 def xmlGetTextNodes(doc: etree._ElementTree, xpath: str, namespaces: dict):
-    """
-    Shorthand to retrieve serialized text nodes matching a specific xpath
+    """Shorthand to retrieve serialized text nodes matching a specific xpath.
+
+    :param lxml.etree._ElementTree doc: XML element to parse
+    :param str xpath: Xpath to reach
+    :param dict namespaces: XML namespaces like `lxml.etree.getroot().nsmap`
     """
     return ", ".join(doc.xpath(xpath, namespaces=namespaces))
 
 
-def parse_string_for_max_date(dates_as_str):
+def parse_string_for_max_date(dates_as_str: str):
+    """Parse string with multiple dates to extract the most recent one. Used
+    to get the latest modification date.
+
+    :param str dates_as_str: string containing dates
+    """
     try:
         dates_python = []
         for date_str in dates_as_str.split(","):
@@ -61,11 +70,20 @@ def parse_string_for_max_date(dates_as_str):
 # #############################################################################
 # ########## Classes ###############
 # ##################################
-class MetadataIso19139:
-    """
-    metadata with unit test methods
-    """
-    def __init__(self, xml):
+class MetadataIso19139(object):
+    """Object representation of a metadata stored into XML respecting ISO 19139."""
+
+    def __init__(self, xml: Path):
+        """Read and  store the input XML metadata as an object.
+
+        :param pathlib.Path xml: path to the XML file
+        """
+        # lxml needs a str not a Path
+        if isinstance(xml, Path):
+            self.xml_path = str(xml.resolve())
+        else:
+            raise TypeError("XML path must be a pathlib.Path instance.")
+        # ensure namespaces declaration
         self.namespaces = {
             "gts": "http://www.isotc211.org/2005/gts",
             "gml": "http://www.opengis.net/gml",
@@ -76,9 +94,10 @@ class MetadataIso19139:
             "srv": "http://www.isotc211.org/2005/srv",
             "xl": "http://www.w3.org/1999/xlink"
         }
-        self.bbox = []
-        self.xml = xml
-        self.md = etree.parse(xml)
+        # parse xml
+        self.md = etree.parse(self.xml_path)
+        # identifiers
+        self.filename = xml.name
         self.fileIdentifier = xmlGetTextNodes(
             self.md,
             "/gmd:MD_Metadata/gmd:fileIdentifier/gco:CharacterString/text()",
@@ -105,6 +124,18 @@ class MetadataIso19139:
             self.md,
             "/gmd:MD_Metadata/gmd:identificationInfo/"
             "gmd:MD_DataIdentification/gmd:abstract/gco:CharacterString/text()",
+            self.namespaces)
+
+        # collection parent
+        self.parentIdentifier = xmlGetTextNodes(
+            self.md,
+            "/gmd:MD_Metadata/gmd:parentIdentifier/gco:CharacterString/text()",
+            self.namespaces)
+
+        # vector or raster
+        self.storageType = xmlGetTextNodes(
+            self.md,
+            "/gmd:MD_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:spatialRepresentationType/gmd:MD_SpatialRepresentationTypeCode/text()",
             self.namespaces)
 
         # date or datetime ?
@@ -138,6 +169,8 @@ class MetadataIso19139:
                 "gmd:CI_Contact/gmd:address/gmd:CI_Address/gmd:electronicMailAddress/gco:CharacterString/text()",
                 namespaces=self.namespaces)
         }
+        # bounding box
+        self.bbox = []
         try:
             self.lonmin = float(xmlGetTextNodes(
                 self.md,
@@ -170,17 +203,23 @@ class MetadataIso19139:
             self.latmax = 90
 
         # SRS
-        self.srs = xmlGetTextNodes(
+        self.srs_code = xmlGetTextNodes(
             self.md,
             "/gmd:MD_Metadata/gmd:referenceSystemInfo/gmd:MD_ReferenceSystem/"
             "gmd:referenceSystemIdentifier/gmd:RS_Identifier/gmd:code/gco:CharacterString/text()",
             self.namespaces)
-        self.srs += xmlGetTextNodes(
+        self.srs_codeSpace = xmlGetTextNodes(
             self.md,
             "/gmd:MD_Metadata/gmd:referenceSystemInfo/gmd:MD_ReferenceSystem/"
             "gmd:referenceSystemIdentifier/gmd:RS_Identifier/gmd:codeSpace/gco:CharacterString/text()",
             self.namespaces)
-        
+
+        # feature catalogs
+        self.featureCatalogs = xmlGetTextNodes(
+            self.md,
+            "/gmd:MD_Metadata/gmd:contentInfo[19]/gmd:MD_FeatureCatalogueDescription/gmd:featureCatalogueCitation/text()",
+            self.namespaces)
+
 
     def __repr__(self):
         return self.fileIdentifier
@@ -190,19 +229,22 @@ class MetadataIso19139:
     
     def asDict(self):
         return {
+            "filename": self.filename,
             "fileIdentifier": self.fileIdentifier,
             "MD_Identifier": self.MD_Identifier,
             "md_date": self.md_date,
             "title": self.title,
             "OrganisationName": self.OrganisationName,
             "abstract": self.abstract,
+            "parentidentifier": self.parentIdentifier,
             "date": self.date,
             "contact": self.contact,
-            "srs": self.srs,
+            "srs": "{}:{}".format(self.srs_codeSpace, self.srs_code),
             "latmin": self.latmin,
             "latmax": self.latmax,
             "lonmin": self.lonmin,
-            "lonmax": self.lonmax
+            "lonmax": self.lonmax,
+            "featureCatalogs": self.featureCatalogs
         }
         
 
@@ -214,6 +256,7 @@ if __name__ == "__main__":
     """Test parameters for a stand-alone run."""
     li_fixtures_xml = sorted(Path(r"tests/fixtures").glob("**/*.xml"))
     li_fixtures_xml += sorted(Path(r"input").glob("**/*.xml"))
-    for xml in li_fixtures_xml:
-        test = MetadataIso19139(xml=str(xml.resolve()))
+    for xml_path in li_fixtures_xml:
+        test = MetadataIso19139(xml=xml_path)
         print(test.asDict().get("title"), test.asDict().get("srs"))
+        print(test.storageType)

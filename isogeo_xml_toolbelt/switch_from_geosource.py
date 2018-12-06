@@ -160,9 +160,9 @@ def get_md_title(metadata_path: str, metadata_type: str="iso19139") -> tuple:
     if isinstance(metadata_path, Path):
         metadata_path =  str(metadata_path)
     # according to the ISO format
-    if metadata_type=="iso19139":
+    if metadata_type == "iso19139":
         return MetadataIso19139(xml=metadata_path).title
-    elif metadata_type=="iso19110":
+    elif metadata_type == "iso19110":
         return MetadataIso19110(xml=metadata_path).name
     else:
         logging.info("Metadata type not supported: {}".format(metadata_type))
@@ -170,15 +170,18 @@ def get_md_title(metadata_path: str, metadata_type: str="iso19139") -> tuple:
 
 
 # #############################################################################
-# ####### Main function ###########
+# ####### Command-line ############
 # #################################
 @click.command()
 @click.argument("input_dir", default=r"input")
-@click.argument("output_dir", default=r"ouput")
+@click.argument("output_dir", default=r"output")
 def cli_switch_from_geosource(input_dir, output_dir):
     input_folder = Path(input_dir)
     if not input_folder.exists():
         raise IOError("Input folder doesn't exist.")
+    output_dir = Path(output_dir)
+    if not output_dir.exists():
+        output_dir.mkdir(parents=True, exist_ok=True)
     # get list of metadata
     li_metadata_folders = list_metadata_folder(input_folder)
     logging.info("{} compatible metadata folders found."
@@ -190,8 +193,23 @@ def cli_switch_from_geosource(input_dir, output_dir):
     # parse dict
     for i in d_metadata:
         #print(d_metadata.get(i)[1])
-        print(d_metadata.get(i)[2], get_md_title(
-            d_metadata.get(i)[1], d_metadata.get(i)[2]))
+        # print(i)
+        # print(d_metadata.get(i)[2], get_md_title(
+        #     d_metadata.get(i)[1], d_metadata.get(i)[2]))
+        #print(d_metadata.get(i)[0], d_metadata.get(i)[2])
+
+        # ensure that the dest folder is created
+        output_dir.joinpath(d_metadata.get(i)[0], d_metadata.get(i)[
+                            2]).mkdir(parents=True, exist_ok=True)
+        # format output filename
+        md_title = get_md_title(d_metadata.get(i)[1], d_metadata.get(i)[2])
+        if not md_title:
+            md_title = "NoTitle"
+            logging.info("Title is missing: {}".format(i.name))
+        # copy
+        
+
+
 
 # #############################################################################
 # ### Stand alone execution #######

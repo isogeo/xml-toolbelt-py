@@ -18,6 +18,7 @@ import datetime
 import logging
 import os
 from pathlib import Path
+from uuid import UUID
 
 # 3rd party library
 import arrow
@@ -38,13 +39,21 @@ logging.basicConfig(level=logging.INFO)
 # ########## Functions #############
 # ##################################
 def xmlGetTextNodes(doc: etree._ElementTree, xpath: str, namespaces: dict):
-    """
-    Shorthand to retrieve serialized text nodes matching a specific xpath
+    """Shorthand to retrieve serialized text nodes matching a specific xpath.
+
+    :param lxml.etree._ElementTree doc: XML element to parse
+    :param str xpath: Xpath to reach
+    :param dict namespaces: XML namespaces like `lxml.etree.getroot().nsmap`
     """
     return ", ".join(doc.xpath(xpath, namespaces=namespaces))
 
 
 def parse_string_for_max_date(dates_as_str: str):
+    """Parse string with multiple dates to extract the most recent one. Used
+    to get the latest modification date.
+
+    :param str dates_as_str: string containing dates
+    """
     try:
         dates_python = []
         for date_str in dates_as_str.split(","):
@@ -61,11 +70,19 @@ def parse_string_for_max_date(dates_as_str: str):
 # #############################################################################
 # ########## Classes ###############
 # ##################################
-class MetadataIso19110:
-    """
-    metadata with unit test methods
-    """
-    def __init__(self, xml):
+class MetadataIso19110(object):
+    """Object representation of a metadata stored into XML respecting ISO 19110."""
+
+    def __init__(self, xml: Path):
+        """Read and  store the input XML metadata as an object.
+
+        :param pathlib.Path xml: path to the XML file
+        """
+        # lxml needs a str not a Path
+        if isinstance(xml, Path):
+            self.xml_path = str(xml.resolve())
+        else:
+            raise TypeError("XML path must be a pathlib.Path instance.")
         # set nampespaces
         self.namespaces = {'gco': 'http://www.isotc211.org/2005/gco',
                            'geonet': 'http://www.fao.org/geonetwork',
@@ -79,109 +96,71 @@ class MetadataIso19110:
                            'xsi': 'http://www.w3.org/2001/XMLSchema-instance'
         }
         # parse xml
-        self.xml = xml
-        self.md = etree.parse(xml)
+        self.md = etree.parse(self.xml_path)
         # identifiers
-        self.fileIdentifier = xmlGetTextNodes(
-            self.md,
-            "/gmd:MD_Metadata/gmd:fileIdentifier/gco:CharacterString/text()",
-            self.namespaces)
-        self.MD_Identifier = xmlGetTextNodes(
-            self.md,
-            "/gmd:MD_Metadata/gmd:identificationInfo/"
-            "gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/"
-            "gmd:identifier/gmd:MD_Identifier/gmd:code/gco:CharacterString/text()",
-            self.namespaces)
+        self.filename = xml.name
+        try:
+            self.fileIdentifier = UUID(xml.name)
+        except ValueError:
+            pass
+        # name <--> equivalent to title
         self.name = xmlGetTextNodes(
             self.md,
             "/gfc:FC_FeatureCatalogue/gfc:name/gco:CharacterString/text()",
             self.namespaces)
-        self.OrganisationName = xmlGetTextNodes(
+        # field of application
+        self.fieldOfapplication = xmlGetTextNodes(
             self.md,
-            "/gmd:MD_Metadata/gmd:identificationInfo/"
-            "gmd:MD_DataIdentification/gmd:pointOfContact/"
-            "gmd:CI_ResponsibleParty/gmd:organisationName/gco:CharacterString/text()",
-            self.namespaces)
-        self.abstract = xmlGetTextNodes(
-            self.md,
-            "/gmd:MD_Metadata/gmd:identificationInfo/"
-            "gmd:MD_DataIdentification/gmd:abstract/gco:CharacterString/text()",
+            "/gfc:FC_FeatureCatalogue/gfc:fieldOfApplication/gco:CharacterString/text()",
             self.namespaces)
 
-        # date or datetime ?
+        # organization
+        self.OrganisationName = xmlGetTextNodes(
+            self.md,
+            "/gfc:FC_FeatureCatalogue/gfc:producer/gmd:CI_ResponsibleParty/gmd:organisationName/gco:CharacterString/text()",
+            self.namespaces)
+
+
+        # version date or datetime
         dates_str = xmlGetTextNodes(
             self.md,
-            "/gmd:MD_Metadata/gmd:identificationInfo/"
-            "gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/"
-            "gmd:date/gmd:CI_Date/gmd:date/gco:Date/text()",
+            "/gfc:FC_FeatureCatalogue/gfc:versionDate/gco:Date/text()",
             self.namespaces)
         datetimes_str = xmlGetTextNodes(
             self.md,
-            "/gmd:MD_Metadata/gmd:identificationInfo/"
-            "gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/"
-            "gmd:date/gmd:CI_Date/gmd:date/gco:DateTime/text()",
+            "/gfc:FC_FeatureCatalogue/gfc:versionDate/gco:DateTime/text()",
             self.namespaces)
         if dates_str != "":
             self.date = parse_string_for_max_date(dates_str)
         else:
             self.date = parse_string_for_max_date(datetimes_str)
         
-        # seems always datetime
-        md_dates_str = xmlGetTextNodes(
-            self.md,
-            "/gmd:MD_Metadata/gmd:dateStamp/"
-            "gco:DateTime/text()",
-            self.namespaces)
-        self.md_date = parse_string_for_max_date(md_dates_str)
+        # contacts
         self.contact = {
-            "mails": self.md.xpath(
-                "/gmd:MD_Metadata/gmd:contact/gmd:CI_ResponsibleParty/gmd:contactInfo/"
-                "gmd:CI_Contact/gmd:address/gmd:CI_Address/gmd:electronicMailAddress/gco:CharacterString/text()",
+            "email": self.md.xpath(
+                "/gfc:FC_FeatureCatalogue/gfc:producer/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:address/gmd:CI_Address/gmd:electronicMailAddress/gco:CharacterString/text()",
+                namespaces=self.namespaces),
+            "address": self.md.xpath(
+                "/gfc:FC_FeatureCatalogue/gfc:producer/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:address/gmd:CI_Address/gmd:deliveryPoint/gco:CharacterString/text()",
+                namespaces=self.namespaces),
+            "postalCode": self.md.xpath(
+                "/gfc:FC_FeatureCatalogue/gfc:producer/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:address/gmd:CI_Address/gmd:postalCode/gco:CharacterString/text()",
+                namespaces=self.namespaces),
+            "city": self.md.xpath(
+                "/gfc:FC_FeatureCatalogue/gfc:producer/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:address/gmd:CI_Address/gmd:city/gco:CharacterString/text()",
                 namespaces=self.namespaces)
         }
-        try:
-            self.lonmin = float(xmlGetTextNodes(
-                self.md,
-                "/gmd:MD_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/"
-                "gmd:extent/gmd:EX_Extent/gmd:geographicElement/gmd:EX_GeographicBoundingBox/"
-                "gmd:westBoundLongitude/gco:Decimal/text()",
-                self.namespaces))
-            self.lonmax = float(xmlGetTextNodes(
-                self.md,
-                "/gmd:MD_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/"
-                "gmd:extent/gmd:EX_Extent/gmd:geographicElement/gmd:EX_GeographicBoundingBox/"
-                "gmd:eastBoundLongitude/gco:Decimal/text()",
-                self.namespaces))
-            self.latmin = float(xmlGetTextNodes(
-                self.md,
-                "/gmd:MD_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/"
-                "gmd:extent/gmd:EX_Extent/gmd:geographicElement/gmd:EX_GeographicBoundingBox/"
-                "gmd:southBoundLatitude/gco:Decimal/text()",
-                self.namespaces))
-            self.latmax = float(xmlGetTextNodes(
-                self.md,
-                "/gmd:MD_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/"
-                "gmd:extent/gmd:EX_Extent/gmd:geographicElement/gmd:EX_GeographicBoundingBox/"
-                "gmd:northBoundLatitude/gco:Decimal/text()",
-                self.namespaces))
-        except:
-            self.lonmin = -180
-            self.lonmax = 180
-            self.latmin = -90
-            self.latmax = 90
 
-        # SRS
-        self.srs = xmlGetTextNodes(
+        # feature types
+        self.featureTypes = xmlGetTextNodes(
             self.md,
-            "/gmd:MD_Metadata/gmd:referenceSystemInfo/gmd:MD_ReferenceSystem/"
-            "gmd:referenceSystemIdentifier/gmd:RS_Identifier/gmd:code/gco:CharacterString/text()",
+            "/gfc:FC_FeatureCatalogue/gfc:featureType/gfc:FC_FeatureType/gfc:typeName/gco:LocalName/text()",
             self.namespaces)
-        self.srs += xmlGetTextNodes(
+        self.featureAttributes = xmlGetTextNodes(
             self.md,
-            "/gmd:MD_Metadata/gmd:referenceSystemInfo/gmd:MD_ReferenceSystem/"
-            "gmd:referenceSystemIdentifier/gmd:RS_Identifier/gmd:codeSpace/gco:CharacterString/text()",
+            "/gfc:FC_FeatureCatalogue/gfc:featureType/gfc:FC_FeatureType/gfc:carrierOfCharacteristics[6]/gfc:FC_FeatureAttribute/gfc:memberName/gco:LocalName/text()",
             self.namespaces)
-        
+
 
     def __repr__(self):
         return self.fileIdentifier
@@ -190,21 +169,17 @@ class MetadataIso19110:
         return self.fileIdentifier
     
     def asDict(self):
+        """Return the metadata object as a dict."""
         return {
-            "fileIdentifier": self.fileIdentifier,
-            "MD_Identifier": self.MD_Identifier,
-            "md_date": self.md_date,
+            "filename": self.filename,
+            #"fileIdentifier": self.fileIdentifier,
             "name": self.name,
             "title": self.name,
-            "OrganisationName": self.OrganisationName,
-            "abstract": self.abstract,
+            "fieldOfApplication": self.fieldOfapplication,
             "date": self.date,
+            "OrganisationName": self.OrganisationName,
             "contact": self.contact,
-            "srs": self.srs,
-            "latmin": self.latmin,
-            "latmax": self.latmax,
-            "lonmin": self.lonmin,
-            "lonmax": self.lonmax
+            "featureTypes": self.featureTypes
         }
 
 
@@ -215,7 +190,8 @@ class MetadataIso19110:
 if __name__ == "__main__":
     """Test parameters for a stand-alone run."""
     li_fixtures_xml = sorted(Path(r"tests/fixtures").glob("**/*.xml"))
-    li_fixtures_xml += sorted(Path(r"input").glob("**/*.xml"))
-    for xml in li_fixtures_xml:
-        test = MetadataIso19110(xml=os.path.normpath(xml))
-        print(test.asDict().get("title"), test.asDict().get("srs"))
+    li_fixtures_xml += sorted(Path(r"input/CD92/Catalogue d'attribut").glob("**/*.xml"))
+    for xml_path in li_fixtures_xml:
+        test = MetadataIso19110(xml=xml_path)
+        print(test.name,
+              test.featureAttributes)

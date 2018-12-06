@@ -1,1 +1,0 @@
-from reader_iso19139 import MetadataIso19139
