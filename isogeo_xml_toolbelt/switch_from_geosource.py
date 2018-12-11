@@ -174,8 +174,11 @@ def get_metadata(metadata_path: str, metadata_type: str="iso19139") -> tuple:
 # ####### Command-line ############
 # #################################
 @click.command()
-@click.argument("input_dir", default=r"input")
-@click.argument("output_dir", default=r"output")
+@click.option("--input_dir", default=r"input",
+              help="Path to the input folder. Default: './input'.")
+@click.option("--output_dir", default=r"output",
+              help="Path to the output folder. Default: './output'.")
+@click.option("--csv", default=1, help="Summarize into a CSV file. Default: True.")
 def cli_switch_from_geosource(input_dir, output_dir):
     input_folder = Path(input_dir)
     if not input_folder.exists():
