@@ -54,5 +54,5 @@ class TestReaderIso19139(unittest.TestCase):
         """Check reader"""
         # loop on fixtures
         for i in self.li_fixtures_repo:
-            md = MetadataIso19139(str(i.resolve()))
+            md = MetadataIso19139(i.resolve())
             self.assertEqual(md.asDict().get("title"), md.title)

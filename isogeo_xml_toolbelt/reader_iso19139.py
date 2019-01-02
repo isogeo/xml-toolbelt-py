@@ -25,7 +25,10 @@ import arrow
 from lxml import etree
 
 # submodules
-from xml_utils import XmlUtils
+try:
+    from .xml_utils import XmlUtils
+except (ImportError, ValueError, SystemError):
+    from xml_utils import XmlUtils
 
 # #############################################################################
 # ########## Globals ###############
