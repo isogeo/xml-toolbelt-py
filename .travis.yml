@@ -12,7 +12,7 @@ cache: pip
 # dependencies
 install:
   - "pip install pipenv"
-  - "pipenv sync"
+  - "pipenv sync --dev"
 
 # run tests
 script:
