@@ -24,48 +24,18 @@ from uuid import UUID
 import arrow
 from lxml import etree
 
+# submodules
+from xml_utils import XmlUtils
+
 # #############################################################################
 # ########## Globals ###############
 # ##################################
 
-# required subfolders
-input_dir = Path("input/").mkdir(exist_ok=True)
-
 # logging
 logging.basicConfig(level=logging.INFO)
 
-
-# #############################################################################
-# ########## Functions #############
-# ##################################
-def xmlGetTextNodes(doc: etree._ElementTree, xpath: str, namespaces: dict):
-    """Shorthand to retrieve serialized text nodes matching a specific xpath.
-
-    :param lxml.etree._ElementTree doc: XML element to parse
-    :param str xpath: Xpath to reach
-    :param dict namespaces: XML namespaces like `lxml.etree.getroot().nsmap`
-    """
-    return ", ".join(doc.xpath(xpath, namespaces=namespaces))
-
-
-def parse_string_for_max_date(dates_as_str: str):
-    """Parse string with multiple dates to extract the most recent one. Used
-    to get the latest modification date.
-
-    :param str dates_as_str: string containing dates
-    """
-    try:
-        dates_python = []
-        for date_str in dates_as_str.split(","):
-            date_str = date_str.strip()
-            if date_str != "":
-                date_python = arrow.get(date_str)
-                dates_python.append(date_python)
-        if len(dates_python) > 0:
-            return max(dates_python)
-    except:
-        logging.error("date parsing error : " + dates_as_str)
-        return None
+# utils
+utils = XmlUtils()
 
 # #############################################################################
 # ########## Classes ###############
@@ -98,36 +68,36 @@ class MetadataIso19139(object):
         self.md = etree.parse(self.xml_path)
         # identifiers
         self.filename = xml.name
-        self.fileIdentifier = xmlGetTextNodes(
+        self.fileIdentifier = utils.xmlGetTextNodes(
             self.md,
             "/gmd:MD_Metadata/gmd:fileIdentifier/gco:CharacterString/text()",
             self.namespaces)
-        self.MD_Identifier = xmlGetTextNodes(
+        self.MD_Identifier = utils.xmlGetTextNodes(
             self.md,
             "/gmd:MD_Metadata/gmd:identificationInfo/"
             "gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/"
             "gmd:identifier/gmd:MD_Identifier/gmd:code/gco:CharacterString/text()",
             self.namespaces)
-        self.title = xmlGetTextNodes(
+        self.title = utils.xmlGetTextNodes(
             self.md,
             "/gmd:MD_Metadata/gmd:identificationInfo/"
             "gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/"
             "gmd:title/gco:CharacterString/text()",
             self.namespaces)
-        self.OrganisationName = xmlGetTextNodes(
+        self.OrganisationName = utils.xmlGetTextNodes(
             self.md,
             "/gmd:MD_Metadata/gmd:identificationInfo/"
             "gmd:MD_DataIdentification/gmd:pointOfContact/"
             "gmd:CI_ResponsibleParty/gmd:organisationName/gco:CharacterString/text()",
             self.namespaces)
-        self.abstract = xmlGetTextNodes(
+        self.abstract = utils.xmlGetTextNodes(
             self.md,
             "/gmd:MD_Metadata/gmd:identificationInfo/"
             "gmd:MD_DataIdentification/gmd:abstract/gco:CharacterString/text()",
             self.namespaces)
 
         # collection parent
-        self.parentIdentifier = xmlGetTextNodes(
+        self.parentIdentifier = utils.xmlGetTextNodes(
             self.md,
             "/gmd:MD_Metadata/gmd:parentIdentifier/gco:CharacterString/text()",
             self.namespaces)
@@ -137,41 +107,41 @@ class MetadataIso19139(object):
 
 
         # format
-        self.formatName = xmlGetTextNodes(
+        self.formatName = utils.xmlGetTextNodes(
             self.md,
             "/gmd:MD_Metadata/gmd:distributionInfo/gmd:MD_Distribution/gmd:distributionFormat/gmd:MD_Format/gmd:name/gco:CharacterString/text()",
             self.namespaces)
-        self.formatVersion = xmlGetTextNodes(
+        self.formatVersion = utils.xmlGetTextNodes(
             self.md,
             "/gmd:MD_Metadata/gmd:distributionInfo/gmd:MD_Distribution/gmd:distributionFormat/gmd:MD_Format/gmd:version/gco:CharacterString/text()",
             self.namespaces)
 
 
         # date or datetime ?
-        dates_str = xmlGetTextNodes(
+        dates_str = utils.xmlGetTextNodes(
             self.md,
             "/gmd:MD_Metadata/gmd:identificationInfo/"
             "gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/"
             "gmd:date/gmd:CI_Date/gmd:date/gco:Date/text()",
             self.namespaces)
-        datetimes_str = xmlGetTextNodes(
+        datetimes_str = utils.xmlGetTextNodes(
             self.md,
             "/gmd:MD_Metadata/gmd:identificationInfo/"
             "gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/"
             "gmd:date/gmd:CI_Date/gmd:date/gco:DateTime/text()",
             self.namespaces)
         if dates_str != "":
-            self.date = parse_string_for_max_date(dates_str)
+            self.date = utils.parse_string_for_max_date(dates_str)
         else:
-            self.date = parse_string_for_max_date(datetimes_str)
+            self.date = utils.parse_string_for_max_date(datetimes_str)
         
         # seems always datetime
-        md_dates_str = xmlGetTextNodes(
+        md_dates_str = utils.xmlGetTextNodes(
             self.md,
             "/gmd:MD_Metadata/gmd:dateStamp/"
             "gco:DateTime/text()",
             self.namespaces)
-        self.md_date = parse_string_for_max_date(md_dates_str)
+        self.md_date = utils.parse_string_for_max_date(md_dates_str)
         self.contact = {
             "mails": self.md.xpath(
                 "/gmd:MD_Metadata/gmd:contact/gmd:CI_ResponsibleParty/gmd:contactInfo/"
@@ -181,25 +151,25 @@ class MetadataIso19139(object):
         # bounding box
         self.bbox = []
         try:
-            self.lonmin = float(xmlGetTextNodes(
+            self.lonmin = float(utils.xmlGetTextNodes(
                 self.md,
                 "/gmd:MD_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/"
                 "gmd:extent/gmd:EX_Extent/gmd:geographicElement/gmd:EX_GeographicBoundingBox/"
                 "gmd:westBoundLongitude/gco:Decimal/text()",
                 self.namespaces))
-            self.lonmax = float(xmlGetTextNodes(
+            self.lonmax = float(utils.xmlGetTextNodes(
                 self.md,
                 "/gmd:MD_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/"
                 "gmd:extent/gmd:EX_Extent/gmd:geographicElement/gmd:EX_GeographicBoundingBox/"
                 "gmd:eastBoundLongitude/gco:Decimal/text()",
                 self.namespaces))
-            self.latmin = float(xmlGetTextNodes(
+            self.latmin = float(utils.xmlGetTextNodes(
                 self.md,
                 "/gmd:MD_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/"
                 "gmd:extent/gmd:EX_Extent/gmd:geographicElement/gmd:EX_GeographicBoundingBox/"
                 "gmd:southBoundLatitude/gco:Decimal/text()",
                 self.namespaces))
-            self.latmax = float(xmlGetTextNodes(
+            self.latmax = float(utils.xmlGetTextNodes(
                 self.md,
                 "/gmd:MD_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/"
                 "gmd:extent/gmd:EX_Extent/gmd:geographicElement/gmd:EX_GeographicBoundingBox/"
@@ -212,25 +182,25 @@ class MetadataIso19139(object):
             self.latmax = 90
 
         # SRS
-        self.srs_code = xmlGetTextNodes(
+        self.srs_code = utils.xmlGetTextNodes(
             self.md,
             "/gmd:MD_Metadata/gmd:referenceSystemInfo/gmd:MD_ReferenceSystem/"
             "gmd:referenceSystemIdentifier/gmd:RS_Identifier/gmd:code/gco:CharacterString/text()",
             self.namespaces)
-        self.srs_codeSpace = xmlGetTextNodes(
+        self.srs_codeSpace = utils.xmlGetTextNodes(
             self.md,
             "/gmd:MD_Metadata/gmd:referenceSystemInfo/gmd:MD_ReferenceSystem/"
             "gmd:referenceSystemIdentifier/gmd:RS_Identifier/gmd:codeSpace/gco:CharacterString/text()",
             self.namespaces)
 
         # feature count
-        self.featureCount = xmlGetTextNodes(
+        self.featureCount = utils.xmlGetTextNodes(
             self.md,
             "/gmd:MD_Metadata/gmd:spatialRepresentationInfo/gmd:MD_VectorSpatialRepresentation/gmd:geometricObjects/gmd:MD_GeometricObjects/gmd:geometricObjectCount/gco:Integer/text()",
             self.namespaces)
 
         # feature catalogs
-        self.featureCatalogs = xmlGetTextNodes(
+        self.featureCatalogs = utils.xmlGetTextNodes(
             self.md,
             "/gmd:MD_Metadata/gmd:contentInfo[19]/gmd:MD_FeatureCatalogueDescription/gmd:featureCatalogueCitation/text()",
             self.namespaces)
@@ -244,7 +214,7 @@ class MetadataIso19139(object):
 
     def get_dataset_type(self, doc):
         """Determines if dataset is a vector / raster / service / sertires or not defined"""
-        storageType = xmlGetTextNodes(
+        storageType = utils.xmlGetTextNodes(
             doc,
             "/gmd:MD_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:spatialRepresentationType/gmd:MD_SpatialRepresentationTypeCode/text()",
             self.namespaces)
@@ -255,10 +225,8 @@ class MetadataIso19139(object):
 
         return storageType
 
-
-
-
-    def asDict(self):
+    def asDict(self) -> dict:
+        """Retrun object as a structured dictionary key: value."""
         return {
             "filename": self.filename,
             "fileIdentifier": self.fileIdentifier,

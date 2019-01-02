@@ -24,48 +24,18 @@ from uuid import UUID
 import arrow
 from lxml import etree
 
+# submodules
+from xml_utils import XmlUtils
+
 # #############################################################################
 # ########## Globals ###############
 # ##################################
 
-# required subfolders
-input_dir = Path("input/").mkdir(exist_ok=True)
-
 # logging
 logging.basicConfig(level=logging.INFO)
 
-
-# #############################################################################
-# ########## Functions #############
-# ##################################
-def xmlGetTextNodes(doc: etree._ElementTree, xpath: str, namespaces: dict):
-    """Shorthand to retrieve serialized text nodes matching a specific xpath.
-
-    :param lxml.etree._ElementTree doc: XML element to parse
-    :param str xpath: Xpath to reach
-    :param dict namespaces: XML namespaces like `lxml.etree.getroot().nsmap`
-    """
-    return ", ".join(doc.xpath(xpath, namespaces=namespaces))
-
-
-def parse_string_for_max_date(dates_as_str: str):
-    """Parse string with multiple dates to extract the most recent one. Used
-    to get the latest modification date.
-
-    :param str dates_as_str: string containing dates
-    """
-    try:
-        dates_python = []
-        for date_str in dates_as_str.split(","):
-            date_str = date_str.strip()
-            if date_str != "":
-                date_python = arrow.get(date_str)
-                dates_python.append(date_python)
-        if len(dates_python) > 0:
-            return max(dates_python)
-    except:
-        logging.error("date parsing error : " + dates_as_str)
-        return None
+# utils
+utils = XmlUtils()
 
 # #############################################################################
 # ########## Classes ###############
@@ -104,36 +74,36 @@ class MetadataIso19110(object):
         except ValueError:
             pass
         # name <--> equivalent to title
-        self.name = xmlGetTextNodes(
+        self.name = utils.xmlGetTextNodes(
             self.md,
             "/gfc:FC_FeatureCatalogue/gfc:name/gco:CharacterString/text()",
             self.namespaces)
         # field of application
-        self.fieldOfapplication = xmlGetTextNodes(
+        self.fieldOfapplication = utils.xmlGetTextNodes(
             self.md,
             "/gfc:FC_FeatureCatalogue/gfc:fieldOfApplication/gco:CharacterString/text()",
             self.namespaces)
 
         # organization
-        self.OrganisationName = xmlGetTextNodes(
+        self.OrganisationName = utils.xmlGetTextNodes(
             self.md,
             "/gfc:FC_FeatureCatalogue/gfc:producer/gmd:CI_ResponsibleParty/gmd:organisationName/gco:CharacterString/text()",
             self.namespaces)
 
 
         # version date or datetime
-        dates_str = xmlGetTextNodes(
+        dates_str = utils.xmlGetTextNodes(
             self.md,
             "/gfc:FC_FeatureCatalogue/gfc:versionDate/gco:Date/text()",
             self.namespaces)
-        datetimes_str = xmlGetTextNodes(
+        datetimes_str = utils.xmlGetTextNodes(
             self.md,
             "/gfc:FC_FeatureCatalogue/gfc:versionDate/gco:DateTime/text()",
             self.namespaces)
         if dates_str != "":
-            self.date = parse_string_for_max_date(dates_str)
+            self.date = utils.parse_string_for_max_date(dates_str)
         else:
-            self.date = parse_string_for_max_date(datetimes_str)
+            self.date = utils.parse_string_for_max_date(datetimes_str)
         
         # contacts
         self.contact = {
@@ -152,11 +122,11 @@ class MetadataIso19110(object):
         }
 
         # feature types
-        self.featureTypes = xmlGetTextNodes(
+        self.featureTypes = utils.xmlGetTextNodes(
             self.md,
             "/gfc:FC_FeatureCatalogue/gfc:featureType/gfc:FC_FeatureType/gfc:typeName/gco:LocalName/text()",
             self.namespaces)
-        self.featureAttributes = xmlGetTextNodes(
+        self.featureAttributes = utils.xmlGetTextNodes(
             self.md,
             "/gfc:FC_FeatureCatalogue/gfc:featureType/gfc:FC_FeatureType/gfc:carrierOfCharacteristics[6]/gfc:FC_FeatureAttribute/gfc:memberName/gco:LocalName/text()",
             self.namespaces)
