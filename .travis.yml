@@ -1,0 +1,24 @@
+language: python
+
+python:
+  - "3.5"
+  - "3.6"
+
+git:
+  depth: 10
+
+cache: pip
+
+# dependencies
+install:
+  - "pip install pipenv"
+  - "pipenv sync"
+
+# run tests
+script:
+  # coverage
+  - coverage run -m unittest discover -s tests/
+
+# coverage reporting
+after_success:
+- codecov
