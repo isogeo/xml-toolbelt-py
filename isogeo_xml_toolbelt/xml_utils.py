@@ -50,6 +50,32 @@ class XmlUtils(object):
         """
         return ", ".join(doc.xpath(xpath, namespaces=namespaces))
 
+    def xmlGetTextTag(self, doc: etree._ElementTree, xpath: str, namespaces: dict):
+        
+        """Function to get information in tag when information isn't in nodes matching a specific xpath.
+
+        :param lxml.etree._ElementTree doc: XML element to parse
+        :param str xpath: Xpath to reach
+        :param dict namespaces: XML namespaces like 'lxml.etree.getroot().nsmap'
+        """
+        #XML Isogeo example: <MD_GeometricObjectTypeCode codeList="http://...#MD_GeometricObjectTypeCode" codeListValue="surface">surface</MD_GeometricObjectTypeCode>
+        
+        tag = self.xmlGetTextNodes(
+            doc, 
+            xpath,
+            namespaces)
+
+        #XML GeoSource example: <gmd:MD_GeometricObjectTypeCode codeList="http://...#MD_GeometricObjectTypeCode" codeListValue="surface" />
+        
+        if len(tag) < 1: 
+            xpath = xpath.replace("/text()"," ")
+            tag = doc.xpath(xpath, namespaces=namespaces)
+            if len(tag) > 0:
+                tag = tag[0].get("codeListValue", None)
+            else: 
+                tag = "None" 
+
+        return tag
 
     def parse_string_for_max_date(self, dates_as_str: str):
         """Parse string with multiple dates to extract the most recent one. Used

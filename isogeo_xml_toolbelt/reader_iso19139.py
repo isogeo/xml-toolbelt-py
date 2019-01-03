@@ -106,9 +106,11 @@ class MetadataIso19139(object):
             self.namespaces)
 
         # vector or raster
-        self.storageType = self.get_dataset_type(self.md)
-
-
+        self.storageType = utils.xmlGetTextTag(
+            self.md,
+            "/gmd:MD_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:spatialRepresentationType/gmd:MD_SpatialRepresentationTypeCode/text()",
+            self.namespaces)
+          
         # format
         self.formatName = utils.xmlGetTextNodes(
             self.md,
@@ -184,6 +186,15 @@ class MetadataIso19139(object):
             self.latmin = -90
             self.latmax = 90
 
+        #Vector geometry
+        # self.geometry = self.get_vector_geometry(self.md)
+
+        self.geometry = utils.xmlGetTextTag(
+            self.md,
+            "gmd:spatialRepresentationInfo/gmd:MD_VectorSpatialRepresentation/"
+            "gmd:geometricObjects/gmd:MD_GeometricObjects/gmd:geometricObjectType/gmd:MD_GeometricObjectTypeCode/text()", 
+            self.namespaces)
+
         # SRS
         self.srs_code = utils.xmlGetTextNodes(
             self.md,
@@ -215,19 +226,6 @@ class MetadataIso19139(object):
     def __str__(self):
         return self.fileIdentifier
 
-    def get_dataset_type(self, doc):
-        """Determines if dataset is a vector / raster / service / sertires or not defined"""
-        storageType = utils.xmlGetTextNodes(
-            doc,
-            "/gmd:MD_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:spatialRepresentationType/gmd:MD_SpatialRepresentationTypeCode/text()",
-            self.namespaces)
-        if len(storageType) < 1:
-            storageType = doc.xpath("/gmd:MD_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:spatialRepresentationType/gmd:MD_SpatialRepresentationTypeCode", namespaces=self.namespaces)
-            if len(storageType) > 0:
-                storageType = storageType[0].get("codeListValue", None)
-
-        return storageType
-
     def asDict(self) -> dict:
         """Retrun object as a structured dictionary key: value."""
         return {
@@ -244,13 +242,16 @@ class MetadataIso19139(object):
             "formatVersion": self.formatVersion,
             "date": self.date,
             "contact": self.contact,
+            "geometry": self.geometry,
             "srs": "{}:{}".format(self.srs_codeSpace, self.srs_code),
             "latmin": self.latmin,
             "latmax": self.latmax,
             "lonmin": self.lonmin,
             "lonmax": self.lonmax,
             "featureCount": self.featureCount,
-            "featureCatalogs": self.featureCatalogs
+            "featureCatalogs": self.featureCatalogs,
+            "storageType": self.storageType
+            
         }
         
 
@@ -260,9 +261,10 @@ class MetadataIso19139(object):
 
 if __name__ == "__main__":
     """Test parameters for a stand-alone run."""
-    li_fixtures_xml = sorted(Path(r"tests/fixtures").glob("**/*.xml"))
-    li_fixtures_xml += sorted(Path(r"input").glob("**/*.xml"))
+    li_fixtures_xml = sorted(Path(r"tests/fixtures/").glob("**/*.xml"))
+    # li_fixtures_xml = sorted(Path(r"input").glob("**/*.xml"))
     for xml_path in li_fixtures_xml:
         test = MetadataIso19139(xml=xml_path)
-        #print(test.asDict().get("title"), test.asDict().get("srs"))
-        print(xml_path.resolve(), test.storageType)
+        # print(test.asDict().get("title"), test.asDict().get("storageType"))
+        print(test.asDict())
+        # print(xml_path.resolve(), test.storageType)
