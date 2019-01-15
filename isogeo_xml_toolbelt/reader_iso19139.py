@@ -26,9 +26,15 @@ from lxml import etree
 
 # submodules
 try:
+    from .xml_19139_fields import Contact
+except (ImportError, ValueError, SystemError):
+    from xml_19139_fields import Contact
+
+try:
     from .xml_utils import XmlUtils
 except (ImportError, ValueError, SystemError):
     from xml_utils import XmlUtils
+
 
 # #############################################################################
 # ########## Globals ###############
@@ -39,6 +45,7 @@ logging.basicConfig(level=logging.INFO)
 
 # utils
 utils = XmlUtils()
+
 
 # #############################################################################
 # ########## Classes ###############
@@ -147,12 +154,13 @@ class MetadataIso19139(object):
             "gco:DateTime/text()",
             self.namespaces)
         self.md_date = utils.parse_string_for_max_date(md_dates_str)
-        self.contact = {
-            "mails": self.md.xpath(
-                "/gmd:MD_Metadata/gmd:contact/gmd:CI_ResponsibleParty/gmd:contactInfo/"
-                "gmd:CI_Contact/gmd:address/gmd:CI_Address/gmd:electronicMailAddress/gco:CharacterString/text()",
-                namespaces=self.namespaces)
-        }
+        
+        #contacts
+        self.list_contacts = self.get_md_contacts()
+
+        #keywords
+        self.keywords = self.get_md_keywords()     
+        
         # bounding box
         self.bbox = []
         try:
@@ -185,9 +193,6 @@ class MetadataIso19139(object):
             self.lonmax = 180
             self.latmin = -90
             self.latmax = 90
-
-        #Vector geometry
-        # self.geometry = self.get_vector_geometry(self.md)
 
         self.geometry = utils.xmlGetTextTag(
             self.md,
@@ -226,22 +231,112 @@ class MetadataIso19139(object):
     def __str__(self):
         return self.fileIdentifier
 
+    def get_md_contacts(self) -> dict:
+
+        md_contact = list()
+
+        root = self.md.getroot() #get xml root
+           
+        #get contacts in gmd:contact
+        for ct in root.findall("gmd:contact/", self.namespaces): 
+
+            md_contact.append(Contact(ct, self.namespaces).asDict())
+            
+        #get contacts in gmd:pointOfContact
+        for pct in root.findall("gmd:identificationInfo/gmd:MD_DataIdentification/gmd:pointOfContact/", self.namespaces): 
+            
+            md_contact.append(Contact(pct, self.namespaces).asDict()) 
+        
+        return md_contact  
+        #     try:
+        #         name = contact.find("gmd:individualName/gco:CharacterString", self.namespaces).text   
+        #     except:
+        #         name = None
+        #     try:
+        #         organisation = contact.find("gmd:organisationName/gco:CharacterString", self.namespaces).text  
+        #     except:
+        #         organisation = None
+            
+        #     adr_path = "gmd:contactInfo/gmd:CI_Contact/gmd:address/gmd:CI_Address/"
+            
+        #     try:
+        #         rue = contact.find(adr_path + "gmd:deliveryPoint/gco:CharacterString", self.namespaces).text 
+        #     except:
+        #         rue = None
+        #     try:
+        #         ville = contact.find(adr_path + "gmd:city/gco:CharacterString", self.namespaces).text   
+        #     except:
+        #         ville = None 
+        #     try:
+        #         cp = contact.find(adr_path + "gmd:postalCode/gco:CharacterString", self.namespaces).text   
+        #     except:
+        #         cp = None
+        #     try:
+        #         country = contact.find(adr_path + "gmd:country/gco:CharacterString", self.namespaces).text 
+        #     except:
+        #         country = None
+        #     try:
+        #         mail = contact.find(adr_path + "gmd:electronicMailAddress/gco:CharacterString", self.namespaces).text
+        #     except:
+        #         mail = None
+            
+        #     try:
+        #         telephone = contact.find("gmd:contactInfo/gmd:CI_Contact/"
+        #                                 "gmd:phone/gmd:CI_Telephone/gmd:voice/gco:CharacterString", self.namespaces).text
+        #     except:
+        #         telephone = None
+            
+        #     try:
+        #         role = contact.find("gmd:role/gmd:CI_RoleCode", self.namespaces).get("codeListValue") 
+        #     except:
+        #         role = None
+
+        #     md_contact.append({"name": name,"organisation": organisation,"role": role,"rue": rue,"ville": ville,
+        #                 "cp": cp,"country": country,"mail": mail,"telephone": telephone})
+
+        # return md_contact
+
+
+    def get_md_keywords(self) -> list:
+
+        md_keywords = list()
+
+        root = self.md.getroot() #get xml root
+           
+        #get contacts in gmd:contact
+        for kw in root.findall("gmd:identificationInfo/"\
+                                "gmd:MD_DataIdentification/"\
+                                    "gmd:descriptiveKeywords/"\
+                                        "gmd:MD_Keywords/gmd:keyword/gco:CharacterString"\
+                                        , self.namespaces):
+            
+            #Test for exceptions like <gco:CharacterString>cycles ; circulations douces ; vélo ; aménagements cyclables ; transport ; véloroute ;</gco:CharacterString>
+            keyword = kw.text.split(";") 
+            if (len(keyword) > 1):
+                for k in keyword:
+                    md_keywords.append(k)
+            else:        
+                md_keywords.append(kw.text)
+       
+               
+        return md_keywords 
+
     def asDict(self) -> dict:
         """Retrun object as a structured dictionary key: value."""
         return {
             "filename": self.filename,
             "fileIdentifier": self.fileIdentifier,
             "MD_Identifier": self.MD_Identifier,
-            "md_date": self.md_date,
-            "title": self.title,
-            "OrganisationName": self.OrganisationName,
-            "abstract": self.abstract,
-            "parentidentifier": self.parentIdentifier,
             "type": self.storageType,
+            "title": self.title,
+            "abstract": self.abstract,
+            "OrganisationName": self.OrganisationName,
+            "keywords": self.keywords,
             "formatName": self.formatName,
             "formatVersion": self.formatVersion,
+            "contacts": self.list_contacts,
+            "md_date": self.md_date,
             "date": self.date,
-            "contact": self.contact,
             "geometry": self.geometry,
             "srs": "{}:{}".format(self.srs_codeSpace, self.srs_code),
             "latmin": self.latmin,
@@ -250,10 +345,12 @@ class MetadataIso19139(object):
             "lonmax": self.lonmax,
             "featureCount": self.featureCount,
             "featureCatalogs": self.featureCatalogs,
-            "storageType": self.storageType
+            "storageType": self.storageType,
+            "parentidentifier": self.parentIdentifier
             
         }
         
+
 
 # #############################################################################
 # ### Stand alone execution #######
@@ -261,10 +358,10 @@ class MetadataIso19139(object):
 
 if __name__ == "__main__":
     """Test parameters for a stand-alone run."""
-    li_fixtures_xml = sorted(Path(r"tests/fixtures/").glob("**/*.xml"))
-    # li_fixtures_xml = sorted(Path(r"input").glob("**/*.xml"))
+    # li_fixtures_xml = sorted(Path(r"tests/fixtures/").glob("**/*.xml"))
+    li_fixtures_xml = sorted(Path(r"input").glob("**/*.xml"))
     for xml_path in li_fixtures_xml:
         test = MetadataIso19139(xml=xml_path)
-        # print(test.asDict().get("title"), test.asDict().get("storageType"))
-        print(test.asDict())
+        print(test.asDict().get("title"), test.asDict().get("keywords"))
+        # print(test.asDict())
         # print(xml_path.resolve(), test.storageType)
