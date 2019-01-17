@@ -36,7 +36,7 @@ from reader_iso19110 import MetadataIso19110
 
 # required subfolders
 input_dir = Path("input/").mkdir(exist_ok=True)
-input_dir = Path("output/").mkdir(exist_ok=True)
+output_dir = Path("output/").mkdir(exist_ok=True)
 
 # logging
 logging.basicConfig(level=logging.INFO)
@@ -178,7 +178,7 @@ def get_metadata(metadata_path: str, metadata_type: str="iso19139") -> tuple:
               help="Path to the input folder. Default: './input'.")
 @click.option("--output_dir", default=r"output",
               help="Path to the output folder. Default: './output'.")
-@click.option("--csv", default=1, help="Summarize into a CSV file. Default: True.")
+# @click.option("--csv", default=1, help="Summarize into a CSV file. Default: True.")
 def cli_switch_from_geosource(input_dir, output_dir):
     input_folder = Path(input_dir)
     if not input_folder.exists():
@@ -207,6 +207,7 @@ def cli_switch_from_geosource(input_dir, output_dir):
         dest_dir.mkdir(parents=True, exist_ok=True)
         # format output filename
         md = get_metadata(d_metadata.get(i)[1], d_metadata.get(i)[2])
+        # print(md)
         if not md:
             continue
         md_title = md.get("title")

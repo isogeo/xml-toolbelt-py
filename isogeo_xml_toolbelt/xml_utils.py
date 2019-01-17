@@ -20,6 +20,7 @@ import logging
 import arrow
 from lxml import etree
 
+
 # #############################################################################
 # ########## Globals ###############
 # ##################################
@@ -50,30 +51,21 @@ class XmlUtils(object):
         """
         return ", ".join(doc.xpath(xpath, namespaces=namespaces))
 
-    def xmlGetTextTag(self, doc: etree._ElementTree, xpath: str, namespaces: dict):
+    def xmlGetTextTag(self, doc: etree._ElementTree, xpath: str, namespaces: dict, key: str):
         
         """Function to get information in tag when information isn't in nodes matching a specific xpath.
 
         :param lxml.etree._ElementTree doc: XML element to parse
         :param str xpath: Xpath to reach
         :param dict namespaces: XML namespaces like 'lxml.etree.getroot().nsmap'
+        :param key : XML key to find like 'codeListValue'
         """
-        #XML Isogeo example: <MD_GeometricObjectTypeCode codeList="http://...#MD_GeometricObjectTypeCode" codeListValue="surface">surface</MD_GeometricObjectTypeCode>
-        
-        tag = self.xmlGetTextNodes(
-            doc, 
-            xpath,
-            namespaces)
 
-        #XML GeoSource example: <gmd:MD_GeometricObjectTypeCode codeList="http://...#MD_GeometricObjectTypeCode" codeListValue="surface" />
-        
-        if len(tag) < 1: 
-            xpath = xpath.replace("/text()"," ")
-            tag = doc.xpath(xpath, namespaces=namespaces)
-            if len(tag) > 0:
-                tag = tag[0].get("codeListValue", None)
-            else: 
-                tag = "None" 
+        tag = doc.xpath(xpath, namespaces=namespaces)
+        if len(tag) > 0:
+            tag = tag[0].get(key, None)
+        else: 
+            tag = "None" 
 
         return tag
 
@@ -96,6 +88,7 @@ class XmlUtils(object):
             logging.error("Date parsing error: " + dates_as_str)
             return None
 
+    
 
 # #############################################################################
 # ### Stand alone execution #######

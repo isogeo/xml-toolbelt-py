@@ -115,8 +115,9 @@ class MetadataIso19139(object):
         # vector or raster
         self.storageType = utils.xmlGetTextTag(
             self.md,
-            "/gmd:MD_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:spatialRepresentationType/gmd:MD_SpatialRepresentationTypeCode/text()",
-            self.namespaces)
+            "/gmd:MD_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:spatialRepresentationType/gmd:MD_SpatialRepresentationTypeCode",
+            self.namespaces,
+            "codeListValue")
           
         # format
         self.formatName = utils.xmlGetTextNodes(
@@ -197,8 +198,33 @@ class MetadataIso19139(object):
         self.geometry = utils.xmlGetTextTag(
             self.md,
             "gmd:spatialRepresentationInfo/gmd:MD_VectorSpatialRepresentation/"
-            "gmd:geometricObjects/gmd:MD_GeometricObjects/gmd:geometricObjectType/gmd:MD_GeometricObjectTypeCode/text()", 
-            self.namespaces)
+            "gmd:geometricObjects/gmd:MD_GeometricObjects/gmd:geometricObjectType/gmd:MD_GeometricObjectTypeCode", 
+            self.namespaces,
+            "codeListValue")
+
+        #resolution for rasters
+        try:
+            self.resolution = int(utils.xmlGetTextNodes(
+                self.md,
+                "/gmd:MD_Metadata/gmd:identificationInfo/"
+                "gmd:MD_DataIdentification/gmd:spatialResolution/"
+                "gmd:MD_Resolution/gmd:distance/gco:Distance/text()",
+                self.namespaces))
+        except:
+            self.resolution = None
+
+        #scale
+        try:
+            self.scale = int(utils.xmlGetTextNodes(
+                self.md,
+                "/gmd:MD_Metadata/gmd:identificationInfo/"
+                "gmd:MD_DataIdentification/gmd:spatialResolution/"
+                "gmd:MD_Resolution/gmd:equivalentScale/gmd:MD_RepresentativeFraction/"
+                "gmd:denominator/gco:Integer/text()",
+                self.namespaces))
+        except:
+            self.scale = None
+
 
         # SRS
         self.srs_code = utils.xmlGetTextNodes(
@@ -248,54 +274,6 @@ class MetadataIso19139(object):
             md_contact.append(Contact(pct, self.namespaces).asDict()) 
         
         return md_contact  
-        #     try:
-        #         name = contact.find("gmd:individualName/gco:CharacterString", self.namespaces).text   
-        #     except:
-        #         name = None
-        #     try:
-        #         organisation = contact.find("gmd:organisationName/gco:CharacterString", self.namespaces).text  
-        #     except:
-        #         organisation = None
-            
-        #     adr_path = "gmd:contactInfo/gmd:CI_Contact/gmd:address/gmd:CI_Address/"
-            
-        #     try:
-        #         rue = contact.find(adr_path + "gmd:deliveryPoint/gco:CharacterString", self.namespaces).text 
-        #     except:
-        #         rue = None
-        #     try:
-        #         ville = contact.find(adr_path + "gmd:city/gco:CharacterString", self.namespaces).text   
-        #     except:
-        #         ville = None 
-        #     try:
-        #         cp = contact.find(adr_path + "gmd:postalCode/gco:CharacterString", self.namespaces).text   
-        #     except:
-        #         cp = None
-        #     try:
-        #         country = contact.find(adr_path + "gmd:country/gco:CharacterString", self.namespaces).text 
-        #     except:
-        #         country = None
-        #     try:
-        #         mail = contact.find(adr_path + "gmd:electronicMailAddress/gco:CharacterString", self.namespaces).text
-        #     except:
-        #         mail = None
-            
-        #     try:
-        #         telephone = contact.find("gmd:contactInfo/gmd:CI_Contact/"
-        #                                 "gmd:phone/gmd:CI_Telephone/gmd:voice/gco:CharacterString", self.namespaces).text
-        #     except:
-        #         telephone = None
-            
-        #     try:
-        #         role = contact.find("gmd:role/gmd:CI_RoleCode", self.namespaces).get("codeListValue") 
-        #     except:
-        #         role = None
-
-        #     md_contact.append({"name": name,"organisation": organisation,"role": role,"rue": rue,"ville": ville,
-        #                 "cp": cp,"country": country,"mail": mail,"telephone": telephone})
-
-        # return md_contact
-
 
     def get_md_keywords(self) -> list:
 
@@ -338,6 +316,8 @@ class MetadataIso19139(object):
             "md_date": self.md_date,
             "date": self.date,
             "geometry": self.geometry,
+            "resolution": self.resolution,
+            "scale": self.scale,
             "srs": "{}:{}".format(self.srs_codeSpace, self.srs_code),
             "latmin": self.latmin,
             "latmax": self.latmax,
@@ -362,6 +342,6 @@ if __name__ == "__main__":
     li_fixtures_xml = sorted(Path(r"input").glob("**/*.xml"))
     for xml_path in li_fixtures_xml:
         test = MetadataIso19139(xml=xml_path)
-        print(test.asDict().get("title"), test.asDict().get("keywords"))
+        print(test.asDict().get("title"), test.asDict().get("scale"))
         # print(test.asDict())
         # print(xml_path.resolve(), test.storageType)
