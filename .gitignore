@@ -144,11 +144,17 @@ $RECYCLE.BIN/
 
 # virtual environments
 virtenv*
+*venv*
+virtenv*/
+virtualenv/
+*.pypirc
+*env*
 
 # input and output files
+*csv
 *.xml
 input/
 output/
 
 # credentials files
-client_secrets.json
+client_secrets*.json
