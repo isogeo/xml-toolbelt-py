@@ -26,6 +26,7 @@ from pathlib import Path
 
 class CsvReporter(object):
     """Produce CSV report. Inherits from standard 'csv.DictWriter' lib.
+
     See:
       - https://docs.python.org/fr/3.6/library/csv.html#csv.DictWriter
       - https://pymotw.com/3/csv/
@@ -124,11 +125,11 @@ if __name__ == "__main__":
     logging.debug("Standalone execution")
     # usage
     csv_report = CsvReporter(csvpath = Path("./report.csv"),
-                             headers=["Nom", "Chemin"])
+                             headers=["Nom", "Chemin", "Objets", "Format"])
     d = {"Nom": "Data",
          "Objets": 25,
          "Format": "ISO19139"}
-    l = [d, d, d]
-
     csv_report.add_unique(d)
+
+    l = [d, d, d]
     csv_report.add_multiple(l)
