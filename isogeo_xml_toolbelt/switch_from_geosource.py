@@ -226,7 +226,12 @@ def cli_switch_from_geosource(input_dir, output_dir, csv, limit, log):
             dest_dir = output_dir.joinpath(d_metadata.get(i)[0], d_metadata.get(i)[2])
             dest_dir.mkdir(parents=True, exist_ok=True)
             # format output filename
-            md = get_metadata(d_metadata.get(i)[1], d_metadata.get(i)[2])
+            try:
+                md = get_metadata(d_metadata.get(i)[1], d_metadata.get(i)[2])
+            except Exception as err:
+                logging.error("Parsing {} returned an error: {}"
+                              .format(d_metadata.get(i)[1], err))
+                continue
             # print(md)
             if not md:
                 continue
@@ -237,7 +242,8 @@ def cli_switch_from_geosource(input_dir, output_dir, csv, limit, log):
             dest_filename = dest_dir.joinpath(re.sub(r"[^\w\-_\. ]", "", md_title) + ".xml")
             # copy
             #print(dest_filename.resolve())
-            shutil.copy(str(d_metadata.get(i)[1]), str(dest_filename.resolve()))
+            shutil.copy(str(d_metadata.get(i)[1]),
+                        str(dest_filename.resolve()))
 
             # report
             if csv:
