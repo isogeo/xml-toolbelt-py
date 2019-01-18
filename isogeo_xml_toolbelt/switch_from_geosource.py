@@ -27,6 +27,7 @@ import click
 from lxml import etree
 
 # modules
+from csv_reporter import CsvReporter
 from reader_iso19139 import MetadataIso19139
 from reader_iso19110 import MetadataIso19110
 
@@ -170,6 +171,7 @@ def get_metadata(metadata_path: str, metadata_type: str="iso19139") -> tuple:
     # 
     return  d_md
 
+
 # #############################################################################
 # ####### Command-line ############
 # #################################
@@ -178,12 +180,14 @@ def get_metadata(metadata_path: str, metadata_type: str="iso19139") -> tuple:
               help="Path to the input folder. Default: './input'.")
 @click.option("--output_dir", default=r"output",
               help="Path to the output folder. Default: './output'.")
+@click.option("--csv", default=1, help="Summarize into a CSV file. Default: True.")
 @click.option("--log", default="DEBUG", help="Log level. Default: ERROR.")
     # logging option
     logging.basicConfig(format="%(asctime)s || %(levelname)s "
                                "|| %(module)s || %(funcName)s || %(lineno)s "
                                "|| %(message)s",
                         level=log)
+    #
     input_folder = Path(input_dir)
     if not input_folder.exists():
         raise IOError("Input folder doesn't exist.")
@@ -197,6 +201,13 @@ def get_metadata(metadata_path: str, metadata_type: str="iso19139") -> tuple:
     # guess if it's a 19110 or a 19139 metadata
     d_metadata = {i: get_md_global_info(i)
                   for i in li_metadata_folders}
+    # csv report
+    if not csv:
+        logging.debug("CSV export disabled.")
+    csv_report = CsvReporter(
+        csvpath=Path("./report.csv"),
+        headers=["name", "filename", "title", "format", "Format"]
+    )
 
     # parse dict
     for i in d_metadata:
@@ -223,6 +234,9 @@ def get_metadata(metadata_path: str, metadata_type: str="iso19139") -> tuple:
         #print(dest_filename.resolve())
         shutil.copy(str(d_metadata.get(i)[1]), str(dest_filename.resolve()))
 
+        # report
+        if csv:
+            csv_report.add_unique(md)
 
 # #############################################################################
 # ### Stand alone execution #######
