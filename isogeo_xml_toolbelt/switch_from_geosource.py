@@ -16,7 +16,7 @@
 
 # standard library
 import logging
-from os import path, rename, walk
+from os import rename
 from pathlib import Path
 import re
 import shutil
