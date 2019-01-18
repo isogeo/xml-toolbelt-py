@@ -10,7 +10,6 @@
 
 # doc
 sphinx==1.8.*
-recommonmark
 
 # code art
 autopep8==1.4.*

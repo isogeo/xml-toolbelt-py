@@ -13,13 +13,11 @@
             }
         },
         {
-            "label": "Build package and upload",
+            "label": "Build package documentation",
             "type": "shell",
-            "command": "./tool_build_upload.ps1",
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            }
+            "command": "./tool_docs_build.ps1",
+            "group": "build",
+            "problemMatcher": []
         }
     ]
 }

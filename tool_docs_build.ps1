@@ -14,11 +14,8 @@ py -3 -m venv env3_docs
 
 # dependencies
 "-- STEP -- Install and display dependencies within the virtualenv"
-python -m pip install -U pip
-pip install -U setuptools wheel
-# pip install MarkupSafe PyYAML --find-links=libs
-pip install -U -r ../requirements.txt
-pip install -U -r ./requirements_docs.txt
+python -m pip install -U pip pipenv
+pipenv install --dev
 
 # remove previous builds
 "-- STEP -- Clean up previous build"
@@ -26,7 +23,7 @@ rm -r _build/*
 
 # build
 "-- STEP -- Build docs"
-sphinx-apidoc -e -f -M -o .\_apidoc\ ..\isogeo-xml-toolbelt\
+sphinx-apidoc -e -f -M -o ".\_apidoc\" "..\isogeo_xml_toolbelt\"
 ./make.bat html
 
 "-- STEP -- Get out the virtualenv"

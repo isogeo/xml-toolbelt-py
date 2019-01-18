@@ -76,7 +76,8 @@ language = None
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
-exclude_patterns = ["_build", "*.xml"]
+exclude_patterns = ["_build", "*.csv", "samples/*", "Thumbs.db", ".DS_Store",
+                    "*env*", "libs/*", "*.xml", "input/*", "output/*"]
 
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'sphinx'
@@ -114,7 +115,7 @@ html_static_path = ['_static']
 # -- Options for HTMLHelp output ---------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'Isogeo-XMLToolbeltdoc'
+htmlhelp_basename = 'IsogeoXMLToolbeltdoc'
 
 
 # -- Options for LaTeX output ------------------------------------------------
@@ -163,7 +164,7 @@ man_pages = [
 #  dir menu entry, description, category)
 texinfo_documents = [
     (master_doc, 'Isogeo-XMLToolbelt', 'Isogeo - XML Toolbelt Documentation',
-     author, 'Isogeo-XMLToolbelt', 'One line description of project.',
+     author, 'Isogeo-XMLToolbelt', 'Scripting toolbox to handle import of external geographic metadata',
      'Miscellaneous'),
 ]
 
@@ -200,10 +201,10 @@ def run_apidoc(_):
 
     cur_dir = os.path.normpath(os.path.dirname(__file__))
     output_path = os.path.join(cur_dir, '_apidoc')
-    modules = os.path.normpath(os.path.join(cur_dir, "../isogeo_xml_toolbelt"))
+    modules = os.path.normpath(os.path.join(cur_dir, "../isogeo_xml_toolbelt/"))
     exclusions = [
-        '../isogeo_pysdk/input',
-        '../isogeo_pysdk/output',
+        '../isogeo_xml_toolbelt/input',
+        '../isogeo_xml_toolbelt/output',
     ]
     main(['-e', '-f', '-M', '-o', output_path, modules] + exclusions)
 

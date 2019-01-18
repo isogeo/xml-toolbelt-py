@@ -8,7 +8,6 @@ codecov = "*"
 pylint = "*"
 autopep8 = "*"
 sphinx = "*"
-recommonmark = "*"
 
 [packages]
 lxml = "*"
