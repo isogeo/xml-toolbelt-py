@@ -182,6 +182,9 @@ def get_metadata(metadata_path: str, metadata_type: str="iso19139") -> tuple:
               help="Path to the output folder. Default: './output'.")
 @click.option("--csv", default=1, help="Summarize into a CSV file. Default: True.")
 @click.option("--log", default="DEBUG", help="Log level. Default: ERROR.")
+def cli_switch_from_geosource(input_dir, output_dir, csv, limit, log):
+    """
+    """
     # logging option
     logging.basicConfig(format="%(asctime)s || %(levelname)s "
                                "|| %(module)s || %(funcName)s || %(lineno)s "
@@ -210,33 +213,35 @@ def get_metadata(metadata_path: str, metadata_type: str="iso19139") -> tuple:
     )
 
     # parse dict
-    for i in d_metadata:
-        #print(d_metadata.get(i)[1])
-        # print(i)
-        # print(d_metadata.get(i)[2], get_md_title(
-        #     d_metadata.get(i)[1], d_metadata.get(i)[2]))
-        #print(d_metadata.get(i)[0], d_metadata.get(i)[2])
+    with click.progressbar(d_metadata,
+                           label="Parsing metadata...",
+                           length=len(d_metadata)) as dico_mds:
+        for i in dico_mds:
+            # print(i)
+            # print(d_metadata.get(i)[2], get_md_title(
+            #     d_metadata.get(i)[1], d_metadata.get(i)[2]))
+            #print(d_metadata.get(i)[0], d_metadata.get(i)[2])
 
-        # ensure that the dest folder is created
-        dest_dir = output_dir.joinpath(d_metadata.get(i)[0], d_metadata.get(i)[2])
-        dest_dir.mkdir(parents=True, exist_ok=True)
-        # format output filename
-        md = get_metadata(d_metadata.get(i)[1], d_metadata.get(i)[2])
-        # print(md)
-        if not md:
-            continue
-        md_title = md.get("title")
-        if not md_title:
-            md_title = "NoTitle"
-            logging.warning("Title is missing: {}".format(d_metadata.get(i)[1]))
-        dest_filename = dest_dir.joinpath(re.sub(r"[^\w\-_\. ]", "", md_title) + ".xml")
-        # copy
-        #print(dest_filename.resolve())
-        shutil.copy(str(d_metadata.get(i)[1]), str(dest_filename.resolve()))
+            # ensure that the dest folder is created
+            dest_dir = output_dir.joinpath(d_metadata.get(i)[0], d_metadata.get(i)[2])
+            dest_dir.mkdir(parents=True, exist_ok=True)
+            # format output filename
+            md = get_metadata(d_metadata.get(i)[1], d_metadata.get(i)[2])
+            # print(md)
+            if not md:
+                continue
+            md_title = md.get("title")
+            if not md_title:
+                md_title = "NoTitle"
+                logging.warning("Title is missing: {}".format(d_metadata.get(i)[1]))
+            dest_filename = dest_dir.joinpath(re.sub(r"[^\w\-_\. ]", "", md_title) + ".xml")
+            # copy
+            #print(dest_filename.resolve())
+            shutil.copy(str(d_metadata.get(i)[1]), str(dest_filename.resolve()))
 
-        # report
-        if csv:
-            csv_report.add_unique(md)
+            # report
+            if csv:
+                csv_report.add_unique(md)
 
 # #############################################################################
 # ### Stand alone execution #######
