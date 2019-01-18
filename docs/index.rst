@@ -14,8 +14,8 @@ Welcome to Isogeo - XML Toolbelt's documentation!
 .. moduleauthor:: Isogeo
 
 :Author: Isogeo
-:Source code: https://github.com/Isogeo/isogeo-api-py-minsdk/
-:Issues: https://github.com/Isogeo/isogeo-api-py-minsdk/issues
+:Source code: https://github.com/Isogeo/isogeo-xml-toolbelt/
+:Issues: https://github.com/Isogeo/isogeo-xml-toolbelt/issues
 
 Package modules
 +++++++++++++++

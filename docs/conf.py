@@ -6,8 +6,6 @@
 # full list see the documentation:
 # http://www.sphinx-doc.org/en/master/config
 
-from recommonmark.parser import CommonMarkParser
-
 # -- Path setup --------------------------------------------------------------
 
 # If extensions (or modules to document with autodoc) are in another directory,
@@ -29,14 +27,14 @@ on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
 
 # -- Project information -----------------------------------------------------
 
-author = 'Isogeo'
 project = 'Isogeo - XML Toolbelt'
-copyright = u'2016 - {0}, {1}'.format(date.today().year, author)
+author = 'Isogeo'
+copyright = u'2018 - {0}, {1}'.format(date.today().year, author)
 
 # The short X.Y version
-version = '2018.12'
+version = '2019.01'
 # The full version, including alpha/beta/rc tags
-release = ''
+release = '2019.01'
 
 
 # -- General configuration ---------------------------------------------------
