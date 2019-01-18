@@ -178,8 +178,12 @@ def get_metadata(metadata_path: str, metadata_type: str="iso19139") -> tuple:
               help="Path to the input folder. Default: './input'.")
 @click.option("--output_dir", default=r"output",
               help="Path to the output folder. Default: './output'.")
-# @click.option("--csv", default=1, help="Summarize into a CSV file. Default: True.")
-def cli_switch_from_geosource(input_dir, output_dir):
+@click.option("--log", default="DEBUG", help="Log level. Default: ERROR.")
+    # logging option
+    logging.basicConfig(format="%(asctime)s || %(levelname)s "
+                               "|| %(module)s || %(funcName)s || %(lineno)s "
+                               "|| %(message)s",
+                        level=log)
     input_folder = Path(input_dir)
     if not input_folder.exists():
         raise IOError("Input folder doesn't exist.")
