@@ -57,7 +57,15 @@ class TestReaderIso19110(unittest.TestCase):
             md = MetadataIso19110(i.resolve())
             # self.assertEqual(md.asDict().get("name"), md.name)
             # self.assertEqual(md.asDict().get("title"), md.name)
-            # print(md.name)
-            # print(md.filename)
-            print(md.name)
-            print(md.featureTypes)
+            print(
+                "filename": md.filename,
+                "fileIdentifier": md.fileIdentifier,
+                "name": md.name,
+                "title": md.name,
+                "fieldOfApplication": md.fieldOfapplication,
+                "date": md.date,
+                "OrganisationName": md.OrganisationName,
+                "contact": md.contact,
+                "featureTypes": md.featureTypes,
+                "featureAttributes": md.featureAttributes,
+            )

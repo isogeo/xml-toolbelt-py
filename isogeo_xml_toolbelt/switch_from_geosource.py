@@ -181,6 +181,7 @@ def get_metadata(metadata_path: str, metadata_type: str="iso19139") -> tuple:
 @click.option("--output_dir", default=r"output",
               help="Path to the output folder. Default: './output'.")
 @click.option("--csv", default=1, help="Summarize into a CSV file. Default: True.")
+@click.option("--limit", default=None, help="Parse only the specified number of files (useful for tests). Leave blank for no limit (default).")
 @click.option("--log", default="DEBUG", help="Log level. Default: ERROR.")
 def cli_switch_from_geosource(input_dir, output_dir, csv, limit, log):
     """

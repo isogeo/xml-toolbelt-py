@@ -125,15 +125,32 @@ class MetadataIso19110(object):
         }
 
         # feature types
-        self.featureTypes = utils.xmlGetTextNodes(
+        featTypeName = utils.xmlGetTextNodes(
             self.md,
             "/gfc:FC_FeatureCatalogue/gfc:featureType/gfc:FC_FeatureType/gfc:typeName/gco:LocalName/text()",
             self.namespaces)
-        self.featureAttributes = utils.xmlGetTextNodes(
+        featTypeUuid = utils.xmlGetTextNodes(
             self.md,
-            "/gfc:FC_FeatureCatalogue/gfc:featureType/gfc:FC_FeatureType/gfc:carrierOfCharacteristics[6]/gfc:FC_FeatureAttribute/gfc:memberName/gco:LocalName/text()",
+            "/gfc:FC_FeatureCatalogue/gfc:featureType/gfc:FC_FeatureType/@uuid",
             self.namespaces)
+        self.featureTypes = {
+            "name": featTypeName,
+            "uuid": featTypeUuid,
+        }
+        
+        # attributes
+        self.featureAttributes = {}
 
+        for item in self.md.xpath("/gfc:FC_FeatureCatalogue/gfc:featureType/gfc:FC_FeatureType/gfc:carrierOfCharacteristics", namespaces=self.namespaces):
+            attrName = item.xpath("gfc:FC_FeatureAttribute/gfc:memberName/gco:LocalName/text()",
+                                  namespaces=self.namespaces)[0]
+            attrDescr = item.xpath("gfc:FC_FeatureAttribute/gfc:definition/gco:CharacterString/text()",
+                                   namespaces=self.namespaces)[0]
+            attrtype = item.xpath("gfc:FC_FeatureAttribute/gfc:valueType/gco:TypeName/gco:aName/gco:CharacterString/text()",
+                                   namespaces=self.namespaces)[0]
+                
+            self.featureAttributes.setdefault(attrName, []).append([attrDescr, attrtype])
+        # print(self.featureAttributes)
 
     def __repr__(self):
         return self.fileIdentifier
@@ -152,7 +169,9 @@ class MetadataIso19110(object):
             "date": self.date,
             "OrganisationName": self.OrganisationName,
             "contact": self.contact,
-            "featureTypes": self.featureTypes
+            "featureTypes": self.featureTypes,
+            "featureAttributes": self.featureAttributes,
+
         }
 
 
@@ -166,5 +185,9 @@ if __name__ == "__main__":
     li_fixtures_xml += sorted(Path(r"input/CD92/Catalogue d'attribut").glob("**/*.xml"))
     for xml_path in li_fixtures_xml:
         test = MetadataIso19110(xml=xml_path)
-        print(test.name,
-              test.featureAttributes)
+        print(
+            "Filename: " + test.filename,
+            "MD name: " + test.name,
+            "Org: " + test.OrganisationName,
+            # "Features types: " + test.featureTypes.,
+            test.featureAttributes)
