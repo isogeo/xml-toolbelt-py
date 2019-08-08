@@ -4,15 +4,17 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
-codecov = "*"
+pip = "*"
+setuptools = "*"
+black = "==19.3b0"
+pytest = "*"
 pylint = "*"
-autopep8 = "*"
 sphinx = "*"
 
 [packages]
-lxml = "*"
-click = "*"
 arrow = "*"
+click = "*"
+lxml = "*"
 
 [requires]
 python_version = "3.6"
