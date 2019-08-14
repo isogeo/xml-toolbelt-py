@@ -1,0 +1,142 @@
+Drilling (Drill hole location, Hole probing and/or accumulation (Grade thickness) results, Hole survey ...),ACCU,Accumulation
+Drilling (Drill hole location, Hole probing and/or accumulation (Grade thickness) results, Hole survey ...),PROB,Probing
+Drilling (Drill hole location, Hole probing and/or accumulation (Grade thickness) results, Hole survey ...),REHB,Rehabilitation
+Estimation and Resources (Apply to archive raster maps),COVE,Covering (Enveloppe)
+Estimation and Resources (Apply to archive raster maps),GRID,Grid
+Estimation and Resources (Apply to archive raster maps),PROB,Probing
+Geography (utilities packages, human geography, physical geography, political geography),PATR,Patrimonial
+Geology (Geological Mapping, interpretation...),COVE,Covering (Enveloppe)
+Geology (Geological Mapping, interpretation...),ISOP,Isopac
+Geophysics (Geohysical Datas, raw datas or interpretated),_MNT,AIRB: MNT issu du levé
+Geophysics (Geohysical Datas, raw datas or interpretated),E_DD,ELEC: Dipôle-dipôle ...
+Geophysics (Geohysical Datas, raw datas or interpretated),E_DP,ELEC: Dipôle-pôle ...
+Geophysics (Geohysical Datas, raw datas or interpretated),E_IP,ELEC: Induced Polarisation (polarisation provoquée)
+Geophysics (Geohysical Datas, raw datas or interpretated),E_IS,ELEC: Interpretation structurale
+Geophysics (Geohysical Datas, raw datas or interpretated),E_PP,ELEC: Pôle-pôle ...
+Geophysics (Geohysical Datas, raw datas or interpretated),E_PS,ELEC: PS
+Geophysics (Geohysical Datas, raw datas or interpretated),E_AR,ELEC: Résistivité apparente
+Geophysics (Geohysical Datas, raw datas or interpretated),E_SC,ELEC: Schlumberger ...
+Geophysics (Geohysical Datas, raw datas or interpretated),E_WE,ELEC: Wenner ...
+Geophysics (Geohysical Datas, raw datas or interpretated),E___,ELECTRIC
+Geophysics (Geohysical Datas, raw datas or interpretated),TEM_,ELECTROMAGNETISM: Time Domain Electromagnetics
+Geophysics (Geohysical Datas, raw datas or interpretated),FEM_,ELECTROMAGNETISM: Frequency Domain Electromagnetics
+Geophysics (Geohysical Datas, raw datas or interpretated),EMAN,EMAN: Emanométrie
+Geophysics (Geohysical Datas, raw datas or interpretated),F_AR,FREM: Résistivité apparente calculée à partir de la fréquence...
+Geophysics (Geohysical Datas, raw datas or interpretated),GAAL,GRAV: anomalie à l'air libre
+Geophysics (Geohysical Datas, raw datas or interpretated),GAB3,GRAV: Anomalie de Bouguer Régionale d'ordre X
+Geophysics (Geohysical Datas, raw datas or interpretated),GAB4,GRAV: Anomalie de Bouguer Résiduelle d'ordre X
+Geophysics (Geohysical Datas, raw datas or interpretated),GAB2,GRAV: Bouguer complet
+Geophysics (Geohysical Datas, raw datas or interpretated),GAB1,GRAV: Bouguer simple
+Geophysics (Geohysical Datas, raw datas or interpretated),G_DH,GRAV: Dérivées de Bouguer simple et complet
+Geophysics (Geohysical Datas, raw datas or interpretated),G_DX,GRAV: Dérivées de Bouguer simple et complet (X)
+Geophysics (Geohysical Datas, raw datas or interpretated),G_DY,GRAV: Dérivées de Bouguer simple et complet (Y)
+Geophysics (Geohysical Datas, raw datas or interpretated),G_DZ,GRAV: Dérivées de Bouguer simple et complet (Z)
+Geophysics (Geohysical Datas, raw datas or interpretated),GOBS,GRAV: G mesuré
+Geophysics (Geohysical Datas, raw datas or interpretated),G_IS,GRAV: Interpretation structurale
+Geophysics (Geohysical Datas, raw datas or interpretated),G_DW,GRAV: Prolongement vers de le bas de Xm du ...
+Geophysics (Geohysical Datas, raw datas or interpretated),G_UP,GRAV: Prolongement vers de le haut de Xm du ...
+Geophysics (Geohysical Datas, raw datas or interpretated),G_TD,GRAV: Tilt dérivatif de ...
+Geophysics (Geohysical Datas, raw datas or interpretated),X_Y_,GRDB: Localisation
+Geophysics (Geohysical Datas, raw datas or interpretated),PLAN,GRDB: Plan de route ('groundborne' road path) Plan de vol (airborne flight path)
+Geophysics (Geohysical Datas, raw datas or interpretated),M__A,MAGN: Anomalie mag
+Geophysics (Geohysical Datas, raw datas or interpretated),MEU_,MAGN: Calculs d'Euler
+Geophysics (Geohysical Datas, raw datas or interpretated),MDX4,MAGN: dérivée ènième selon X de l'anomalie mag.
+Geophysics (Geohysical Datas, raw datas or interpretated),MDY4,MAGN: dérivée ènième selon Y de l'anomalie mag.
+Geophysics (Geohysical Datas, raw datas or interpretated),MDZE,MAGN: dérivée ènième selon Z de l'anomalie mag du RTE
+Geophysics (Geohysical Datas, raw datas or interpretated),MDZP,MAGN: dérivée ènième selon Z de l'anomalie mag du RTP
+Geophysics (Geohysical Datas, raw datas or interpretated),MDZ4,MAGN: dérivée ènième selon Z de l'anomalie mag.
+Geophysics (Geohysical Datas, raw datas or interpretated),MDH1,MAGN: dérivée horizontale (XY) de l'anomalie mag.
+Geophysics (Geohysical Datas, raw datas or interpretated),MDH3,MAGN: dérivée horizontale (XY) du RTE
+Geophysics (Geohysical Datas, raw datas or interpretated),MDH2,MAGN: dérivée horizontale (XY) du RTP
+Geophysics (Geohysical Datas, raw datas or interpretated),MDTA,MAGN: Dérivée horizontale du tilt derivatif de l'anomalie mag.
+Geophysics (Geohysical Datas, raw datas or interpretated),MDTE,MAGN: Dérivée horizontale du tilt derivatif du RTE
+Geophysics (Geohysical Datas, raw datas or interpretated),MDTP,MAGN: Dérivée horizontale du tilt derivatif du RTP
+Geophysics (Geohysical Datas, raw datas or interpretated),MDX1,MAGN: dX de l'anomalie mag.
+Geophysics (Geohysical Datas, raw datas or interpretated),MDX3,MAGN: dX de l'anomalie mag. réduite à l'équateur
+Geophysics (Geohysical Datas, raw datas or interpretated),MDX2,MAGN: dX de l'anomalie mag. réduite au pôle
+Geophysics (Geohysical Datas, raw datas or interpretated),MDY1,MAGN: dY de l'anomalie mag.
+Geophysics (Geohysical Datas, raw datas or interpretated),MDY3,MAGN: dY du RTE
+Geophysics (Geohysical Datas, raw datas or interpretated),MDY2,MAGN: dY du RTP
+Geophysics (Geohysical Datas, raw datas or interpretated),MDZ1,MAGN: dZ de l'anomalie mag.
+Geophysics (Geohysical Datas, raw datas or interpretated),MDZ3,MAGN: dZ du RTE
+Geophysics (Geohysical Datas, raw datas or interpretated),MDZ2,MAGN: dZ du RTP
+Geophysics (Geohysical Datas, raw datas or interpretated),MIGR,MAGN: IGRF
+Geophysics (Geohysical Datas, raw datas or interpretated),M_IS,MAGN: Interpretation structurale
+Geophysics (Geohysical Datas, raw datas or interpretated),M__T,MAGN: Mag champ total
+Geophysics (Geohysical Datas, raw datas or interpretated),MSP1,MAGN: Niveau de détection des maxima dépendant de 1 direction
+Geophysics (Geohysical Datas, raw datas or interpretated),MSP2,MAGN: Niveau de détection des maxima dépendant de 2 directions
+Geophysics (Geohysical Datas, raw datas or interpretated),MSP3,MAGN: Niveau de détection des maxima dépendant de 3 directions
+Geophysics (Geohysical Datas, raw datas or interpretated),MSP4,MAGN: Niveau de détection des maxima dépendant de toutes les directions
+Geophysics (Geohysical Datas, raw datas or interpretated),MDW_,MAGN: Prolongement vers de le bas de Xm du ...
+Geophysics (Geohysical Datas, raw datas or interpretated),MUP_,MAGN: Prolongement vers de le haut de Xm du ...
+Geophysics (Geohysical Datas, raw datas or interpretated),MRE_,MAGN: Réduction à l'équateur de ...
+Geophysics (Geohysical Datas, raw datas or interpretated),MRP_,MAGN: Réduction au pôle de ...
+Geophysics (Geohysical Datas, raw datas or interpretated),MAS1,MAGN: signal analytique de l'anomalie mag
+Geophysics (Geohysical Datas, raw datas or interpretated),MAS3,MAGN: signal analytique du RTE
+Geophysics (Geohysical Datas, raw datas or interpretated),MAS2,MAGN: signal analytique du RTP
+Geophysics (Geohysical Datas, raw datas or interpretated),MST_,MAGN: structures/linéaments
+Geophysics (Geohysical Datas, raw datas or interpretated),MTD1,MAGN: tilt dérivatif de l'anomalie mag.
+Geophysics (Geohysical Datas, raw datas or interpretated),MTD3,MAGN: tilt dérivatif du RTE
+Geophysics (Geohysical Datas, raw datas or interpretated),MTD2,MAGN: tilt dérivatif du RTP
+Geophysics (Geohysical Datas, raw datas or interpretated),M___,MAGNETISM
+Geophysics (Geohysical Datas, raw datas or interpretated),MTEL,MAGNETOTELLURIE
+Geophysics (Geohysical Datas, raw datas or interpretated),RA_C,RADI: anomalies Comptage total
+Geophysics (Geohysical Datas, raw datas or interpretated),RGLC,RADI: anomalies Comptage total par polygones géologiques
+Geophysics (Geohysical Datas, raw datas or interpretated),RA_K,RADI: anomalies K
+Geophysics (Geohysical Datas, raw datas or interpretated),RGLK,RADI: anomalies K par polygones géologiques
+Geophysics (Geohysical Datas, raw datas or interpretated),RATH,RADI: anomalies Th
+Geophysics (Geohysical Datas, raw datas or interpretated),RGLT,RADI: anomalies Th par polygones géologiques
+Geophysics (Geohysical Datas, raw datas or interpretated),RA_U,RADI: anomalies U
+Geophysics (Geohysical Datas, raw datas or interpretated),RGLU,RADI: anomalies U par polygones géologiques
+Geophysics (Geohysical Datas, raw datas or interpretated),RTRG,RADI: cibles radiométriques
+Geophysics (Geohysical Datas, raw datas or interpretated),RCI2,RADI: Classification U, K, Th
+Geophysics (Geohysical Datas, raw datas or interpretated),RCI1,RADI: Classification U, K, Th, Tc
+Geophysics (Geohysical Datas, raw datas or interpretated),R_TC,RADI: Comptage total
+Geophysics (Geohysical Datas, raw datas or interpretated),R__D,RADI: Débit de dose
+Geophysics (Geohysical Datas, raw datas or interpretated),RSPP,RADI: Données SPP-Gamma...
+Geophysics (Geohysical Datas, raw datas or interpretated),R_IS,RADI: Interpretation structurale
+Geophysics (Geohysical Datas, raw datas or interpretated),R_K_,RADI: K %
+Geophysics (Geohysical Datas, raw datas or interpretated),R_KR,RADI: K CPS
+Geophysics (Geohysical Datas, raw datas or interpretated),RKT1,RADI: K/Th cps
+Geophysics (Geohysical Datas, raw datas or interpretated),RKT2,RADI: K/Th teneur
+Geophysics (Geohysical Datas, raw datas or interpretated),RKU1,RADI: K/U cps
+Geophysics (Geohysical Datas, raw datas or interpretated),RKU2,RADI: K/U teneur
+Geophysics (Geohysical Datas, raw datas or interpretated),RA_C,RADI: Radiometric accumulations
+Geophysics (Geohysical Datas, raw datas or interpretated),RRAD,RADI: Radon ...
+Geophysics (Geohysical Datas, raw datas or interpretated),RTER,RADI: Ternaire
+Geophysics (Geohysical Datas, raw datas or interpretated),RTHR,RADI: Th CPS
+Geophysics (Geohysical Datas, raw datas or interpretated),R_TH,RADI: Th ppm
+Geophysics (Geohysical Datas, raw datas or interpretated),RTK1,RADI: Th/K cps
+Geophysics (Geohysical Datas, raw datas or interpretated),RTK2,RADI: Th/K teneur
+Geophysics (Geohysical Datas, raw datas or interpretated),R_UR,RADI: U CPS
+Geophysics (Geohysical Datas, raw datas or interpretated),R_U_,RADI: U ppm
+Geophysics (Geohysical Datas, raw datas or interpretated),RUK1,RADI: U/K cps
+Geophysics (Geohysical Datas, raw datas or interpretated),RUK2,RADI: U/K teneur
+Geophysics (Geohysical Datas, raw datas or interpretated),RUT1,RADI: U/Th cps
+Geophysics (Geohysical Datas, raw datas or interpretated),RUT2,RADI: U/Th teneurs
+Geophysics (Geohysical Datas, raw datas or interpretated),RUK3,RADI: U²/K cps
+Geophysics (Geohysical Datas, raw datas or interpretated),RUK4,RADI: U²/K teneur
+Geophysics (Geohysical Datas, raw datas or interpretated),RUT3,RADI: U²/Th cps
+Geophysics (Geohysical Datas, raw datas or interpretated),RUT4,RADI: U²/Th teneur
+Geophysics (Geohysical Datas, raw datas or interpretated),CINT,SCIN: Scintillometry
+Geophysics (Geohysical Datas, raw datas or interpretated),S_DM,SEIS: Migration en profondeur
+Geophysics (Geohysical Datas, raw datas or interpretated),SDMI,SEIS: Migration en profondeur interprétée
+Geophysics (Geohysical Datas, raw datas or interpretated),S_TM,SEIS: Migration en temps
+Geophysics (Geohysical Datas, raw datas or interpretated),STOM,SEIS: Tomographie
+Geophysics (Geohysical Datas, raw datas or interpretated),TB01,TDEM: B-field fenêtre incrémentation 01 à XX
+Geophysics (Geohysical Datas, raw datas or interpretated),TCON,TDEM: Carte de conductivité à Z= ? Incrémentation sur la valeur index
+Geophysics (Geohysical Datas, raw datas or interpretated),TERN,TDEM: Carte ternaire
+Geophysics (Geohysical Datas, raw datas or interpretated),TD01,TDEM: dBdt fenêtre incrémentation 01 à XX
+Geophysics (Geohysical Datas, raw datas or interpretated),T_IS,TDEM: Interpretation structurale
+Geophysics (Geohysical Datas, raw datas or interpretated),TVOX,TDEM: Voxel
+Geophysics (Geohysical Datas, raw datas or interpretated),XIRI,XXXX: Rapport interprétation n°??
+Geophysics (Geohysical Datas, raw datas or interpretated),XMRI,XXXX: Rapport mission n°??
+Geophysics (Geohysical Datas, raw datas or interpretated),X_OP,XXXX: Rapport opérateur
+Remote sensing,IMC_,Image Classification
+Topography,_MNT,AIRB: MNT issu du levé
+Topography,ISOB,Isobath
+Utilities/Infrastructures,ELN_,Electric Network
+Utilities/Infrastructures,INDS,Industry
+Utilities/Infrastructures,INFR,Infrastructure
+Utilities/Infrastructures,PHON,Phone
+Utilities/Infrastructures,SECU,Security Infrastructure

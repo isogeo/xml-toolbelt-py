@@ -1,0 +1,4 @@
+Environment 3 UXO UXO (military wastes)
+Environment 3 EPZ Protected zone
+Geography (utilities packages, human geography, physical geography, political geography) 3 EMZ Excluded military zones
+Geology (Geological Mapping, interpretation...) 3 PED Pedology
