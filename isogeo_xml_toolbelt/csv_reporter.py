@@ -53,7 +53,8 @@ class CsvReporter(object):
             raise ValueError("extrahead ({}) must be 'raise' or 'ignore'"
                              .format(extrahead))
         # attributes
-        self.dialect = "excel"
+        csv.register_dialect('semicolon', delimiter=';') #create dialect
+        self.dialect = "semicolon"
         self.extrahead = "ignore"
         self.headers = headers
         self.csvpath = csvpath

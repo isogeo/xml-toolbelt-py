@@ -106,6 +106,32 @@ class MetadataIso19139(object):
             "gmd:MD_DataIdentification/gmd:abstract/gco:CharacterString/text()",
             self.namespaces)
 
+        #Process context and step
+        self.processContext = utils.xmlGetTextNodes(
+            self.md,
+            "/gmd:MD_Metadata/gmd:dataQualityInfo/"
+            "gmd:DQ_DataQuality/gmd:lineage"
+            "/gmd:LI_Lineage/gmd:statement/gco:CharacterString/text()",
+            self.namespaces)    
+
+        self.processStep = utils.xmlGetTextNodes(
+            self.md,
+            "/gmd:MD_Metadata/gmd:dataQualityInfo/"
+            "gmd:DQ_DataQuality/gmd:lineage"
+            "/gmd:LI_Lineage/gmd:processStep/gmd:LI_ProcessStep/gmd:description/"
+            "gco:CharacterString/text()",
+            self.namespaces)
+
+        #update frequency
+        self.updateFrequency = utils.xmlGetTextTag(
+            self.md,
+            "/gmd:MD_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification"
+            "/gmd:resourceMaintenance/gmd:MD_MaintenanceInformation"
+            "/gmd:maintenanceAndUpdateFrequency/gmd:MD_MaintenanceFrequencyCode",
+            self.namespaces,
+            "codeListValue")
+
+        
         # collection parent
         self.parentIdentifier = utils.xmlGetTextNodes(
             self.md,
@@ -203,28 +229,22 @@ class MetadataIso19139(object):
             "codeListValue")
 
         #resolution for rasters
-        try:
-            self.resolution = int(utils.xmlGetTextNodes(
-                self.md,
-                "/gmd:MD_Metadata/gmd:identificationInfo/"
-                "gmd:MD_DataIdentification/gmd:spatialResolution/"
-                "gmd:MD_Resolution/gmd:distance/gco:Distance/text()",
-                self.namespaces))
-        except:
-            self.resolution = None
+
+        self.resolution = utils.xmlGetTextNodes(
+            self.md,
+            "/gmd:MD_Metadata/gmd:identificationInfo/"
+            "gmd:MD_DataIdentification/gmd:spatialResolution/"
+            "gmd:MD_Resolution/gmd:distance/gco:Distance/text()",
+            self.namespaces)
 
         #scale
-        try:
-            self.scale = int(utils.xmlGetTextNodes(
+        self.scale = utils.xmlGetTextNodes(
                 self.md,
                 "/gmd:MD_Metadata/gmd:identificationInfo/"
                 "gmd:MD_DataIdentification/gmd:spatialResolution/"
                 "gmd:MD_Resolution/gmd:equivalentScale/gmd:MD_RepresentativeFraction/"
                 "gmd:denominator/gco:Integer/text()",
-                self.namespaces))
-        except:
-            self.scale = None
-
+                self.namespaces)
 
         # SRS
         self.srs_code = utils.xmlGetTextNodes(
@@ -281,7 +301,7 @@ class MetadataIso19139(object):
 
         root = self.md.getroot() #get xml root
            
-        #get contacts in gmd:contact
+        #get keywords
         for kw in root.findall("gmd:identificationInfo/"\
                                 "gmd:MD_DataIdentification/"\
                                     "gmd:descriptiveKeywords/"\
@@ -308,6 +328,9 @@ class MetadataIso19139(object):
             "type": self.storageType,
             "title": self.title,
             "abstract": self.abstract,
+            "processContext":self.processContext,
+            "processStep": self.processStep,
+            "updateFrequency": self.updateFrequency,
             "OrganisationName": self.OrganisationName,
             "keywords": self.keywords,
             "formatName": self.formatName,
@@ -339,9 +362,11 @@ class MetadataIso19139(object):
 if __name__ == "__main__":
     """Test parameters for a stand-alone run."""
     # li_fixtures_xml = sorted(Path(r"tests/fixtures/").glob("**/*.xml"))
-    li_fixtures_xml = sorted(Path(r"input").glob("**/*.xml"))
+    # li_fixtures_xml = sorted(Path(r"input").glob("**/*.xml"))
+
+    li_fixtures_xml = sorted(Path(r"tests\fixtures\orano_xml").glob("**/*.xml"))
     for xml_path in li_fixtures_xml:
         test = MetadataIso19139(xml=xml_path)
         print(test.asDict().get("title"), test.asDict().get("scale"))
-        # print(test.asDict())
         # print(xml_path.resolve(), test.storageType)
+

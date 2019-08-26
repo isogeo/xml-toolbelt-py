@@ -1,12 +1,3 @@
 {
-    "python.pythonPath": "C:\\Users\\leo.darengosse\\.virtualenvs\\isogeo-xml-toolbelt-e_OlFPPv\\Scripts\\python.exe",
-    "python.unitTest.unittestArgs": [
-        "-v",
-        "-s",
-        "./tests",
-        "-p",
-        "test*.py"
-    ],
-    "python.unitTest.unittestEnabled": true,
-    "python.autoComplete.addBrackets": true
+    "python.pythonPath": ".virtualenv\\Scripts\\python.exe"
 }
