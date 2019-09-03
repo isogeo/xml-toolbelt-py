@@ -21,7 +21,6 @@ from pathlib import Path
 from uuid import UUID
 
 # 3rd party library
-import arrow
 from lxml import etree
 
 # #############################################################################

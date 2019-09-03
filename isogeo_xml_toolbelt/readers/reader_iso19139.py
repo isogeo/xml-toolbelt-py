@@ -21,19 +21,11 @@ from pathlib import Path
 from uuid import UUID
 
 # 3rd party library
-import arrow
 from lxml import etree
 
 # submodules
-try:
-    from .xml_19139_fields import Contact
-except (ImportError, ValueError, SystemError):
-    from xml_19139_fields import Contact
-
-try:
-    from .xml_utils import XmlUtils
-except (ImportError, ValueError, SystemError):
-    from xml_utils import XmlUtils
+from isogeo_xml_toolbelt.models import Contact
+from isogeo_xml_toolbelt.utils import XmlUtils
 
 
 # #############################################################################
