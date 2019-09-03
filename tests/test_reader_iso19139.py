@@ -20,7 +20,7 @@ import sys
 import unittest
 
 # modules
-from isogeo_xml_toolbelt.reader_iso19139 import MetadataIso19139
+from isogeo_xml_toolbelt.readers import MetadataIso19139
 
 # #############################################################################
 # ######## Globals #################
