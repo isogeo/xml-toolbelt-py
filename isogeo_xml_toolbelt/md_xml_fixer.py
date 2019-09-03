@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
 #! python3
 
-from __future__ import (absolute_import, print_function, unicode_literals)
+from __future__ import absolute_import, print_function, unicode_literals
 
 # -----------------------------------------------------------------------------
 # Name:         Metadata XML fixer
@@ -25,7 +25,7 @@ from xml.dom import minidom
 from xml.etree import ElementTree as ET
 
 # imports depending on Python version
-if (sys.version_info < (3, 0)):
+if sys.version_info < (3, 0):
     from io import open
 else:
     pass
@@ -38,15 +38,15 @@ else:
 logger = logging.getLogger("XML_ISO19139_FIXER")
 logging.captureWarnings(True)
 logger.setLevel(logging.DEBUG)
-log_form = logging.Formatter("%(asctime)s || %(levelname)s "
-                             "|| %(module)s || %(lineno)s || %(message)s")
+log_form = logging.Formatter(
+    "%(asctime)s || %(levelname)s " "|| %(module)s || %(lineno)s || %(message)s"
+)
 logfile = RotatingFileHandler("LOG_XML_FIXER.log", "a", 5000000, 1)
 logfile.setLevel(logging.DEBUG)
 logfile.setFormatter(log_form)
 logger.addHandler(logfile)
 logger.info("============ START ================")
-logger.info("Python version: {}"
-            .format(sys.version_info))
+logger.info("Python version: {}".format(sys.version_info))
 
 # customize script
 ds_character_set = "utf-8"
@@ -86,9 +86,11 @@ class MetadataXML19139Fixer(object):
 
         # input XML files
         if not len(listdir(self.fold_in)):
-            logger.error("Input folder was not created, so "
-                         "there is not any XML file. Please "
-                         "copy your XML ISO19139 files inside.")
+            logger.error(
+                "Input folder was not created, so "
+                "there is not any XML file. Please "
+                "copy your XML ISO19139 files inside."
+            )
             sys.exit()
         else:
             logger.info("Files are present in input folder.")
@@ -108,14 +110,16 @@ class MetadataXML19139Fixer(object):
 
     def add_namespaces(self):
         """Add ISO19139 namespaces."""
-        ns = {"gts": "http://www.isotc211.org/2005/gts",
-              "gml": "http://www.opengis.net/gml",
-              "xsi": "http://www.w3.org/2001/XMLSchema-instance",
-              "gco": "http://www.isotc211.org/2005/gco",
-              "gmd": "http://www.isotc211.org/2005/gmd",
-              "gmx": "http://www.isotc211.org/2005/gmx",
-              "srv": "http://www.isotc211.org/2005/srv",
-              "xl": "http://www.w3.org/1999/xlink"}
+        ns = {
+            "gts": "http://www.isotc211.org/2005/gts",
+            "gml": "http://www.opengis.net/gml",
+            "xsi": "http://www.w3.org/2001/XMLSchema-instance",
+            "gco": "http://www.isotc211.org/2005/gco",
+            "gmd": "http://www.isotc211.org/2005/gmd",
+            "gmx": "http://www.isotc211.org/2005/gmx",
+            "srv": "http://www.isotc211.org/2005/srv",
+            "xl": "http://www.w3.org/1999/xlink",
+        }
 
         # register namespaces
         for namespace in ns:
@@ -150,7 +154,10 @@ class MetadataXML19139Fixer(object):
         # date type
         sub_date_type = ET.SubElement(ci_date, "gmd:dateType")
         sub_ci_date_typecode = ET.SubElement(sub_date_type, "gmd:CI_DateTypeCode")
-        sub_ci_date_typecode.set("codeList", "http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/codelist/ML_gmxCodelists.xml#CI_DateTypeCode")
+        sub_ci_date_typecode.set(
+            "codeList",
+            "http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/codelist/ML_gmxCodelists.xml#CI_DateTypeCode",
+        )
         sub_ci_date_typecode.set("codeListValue", "creation")
         sub_ci_date_typecode.text = "creation"
 
@@ -166,14 +173,20 @@ class MetadataXML19139Fixer(object):
         # metadata root
         char_set = ET.SubElement(self.tpl_root, "gmd:characterSet")
         sub_char_set_code = ET.SubElement(char_set, "gmd:MD_CharacterSetCode")
-        sub_char_set_code.set("codeList", "http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/codelist/ML_gmxCodelists.xml#MD_CharacterSetCode")
+        sub_char_set_code.set(
+            "codeList",
+            "http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/codelist/ML_gmxCodelists.xml#MD_CharacterSetCode",
+        )
         sub_char_set_code.set("codeListValue", "utf8")
         sub_char_set_code.text = ds_character_set
         # data identification
         md_data_identification = self.get_md_data_identification()
         char_set = ET.SubElement(md_data_identification, "gmd:characterSet")
         sub_char_set_code = ET.SubElement(char_set, "gmd:MD_CharacterSetCode")
-        sub_char_set_code.set("codeList", "http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/codelist/ML_gmxCodelists.xml#MD_CharacterSetCode")
+        sub_char_set_code.set(
+            "codeList",
+            "http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/codelist/ML_gmxCodelists.xml#MD_CharacterSetCode",
+        )
         sub_char_set_code.set("codeListValue", "utf8")
         sub_char_set_code.text = ds_character_set
 
@@ -195,13 +208,11 @@ class MetadataXML19139Fixer(object):
         """
         rs_identifier = self.get_rs_identifier()
         # fix SRS syntax
-        code = rs_identifier.find("gmd:code/gco:CharacterString",
-                                  self.ns)
+        code = rs_identifier.find("gmd:code/gco:CharacterString", self.ns)
         code.text = ds_srs_code
 
         # remove useless codeSpace
-        code_space = rs_identifier.find("gmd:codeSpace",
-                                        self.ns)
+        code_space = rs_identifier.find("gmd:codeSpace", self.ns)
         rs_identifier.remove(code_space)
 
     def fix_cgus(self):
@@ -245,7 +256,9 @@ class MetadataXML19139Fixer(object):
         constraint_use = ET.SubElement(rs_ident, "gmd:resourceConstraints")
         md_constraint = ET.SubElement(constraint_use, "gmd:MD_Constraints")
         use_limit = ET.SubElement(md_constraint, "gmd:useLimitation")
-        use_anchor = ET.SubElement(use_limit, "{http://www.isotc211.org/2005/gmx}Anchor")
+        use_anchor = ET.SubElement(
+            use_limit, "{http://www.isotc211.org/2005/gmx}Anchor"
+        )
         use_anchor.set("{http://www.w3.org/1999/xlink}title", ds_license_lbl)
         use_anchor.set("{http://www.w3.org/1999/xlink}href", ds_license_url)
 
@@ -253,55 +266,57 @@ class MetadataXML19139Fixer(object):
 
     def get_md_data_identification(self):
         """Get Character_set level items."""
-        pth_character_set = "gmd:identificationInfo/"\
-                            "gmd:MD_DataIdentification"
-        return self.tpl_root.find(pth_character_set,
-                                  self.ns)
+        pth_character_set = "gmd:identificationInfo/" "gmd:MD_DataIdentification"
+        return self.tpl_root.find(pth_character_set, self.ns)
 
     def get_md_ci_citation(self):
         """Get CI_Citation level items."""
-        pth_ci_citation = "gmd:identificationInfo/"\
-                          "gmd:MD_DataIdentification/"\
-                          "gmd:citation/gmd:CI_Citation"
-        return self.tpl_root.find(pth_ci_citation,
-                                  self.ns)
+        pth_ci_citation = (
+            "gmd:identificationInfo/"
+            "gmd:MD_DataIdentification/"
+            "gmd:citation/gmd:CI_Citation"
+        )
+        return self.tpl_root.find(pth_ci_citation, self.ns)
 
     def get_rs_identifier(self):
         """Get RS_Identifier level items."""
-        pth_rs_identifer = "gmd:referenceSystemInfo/"\
-                           "gmd:MD_ReferenceSystem/"\
-                           "gmd:referenceSystemIdentifier/"\
-                           "gmd:RS_Identifier"
-        return self.tpl_root.find(pth_rs_identifer,
-                                  self.ns)
+        pth_rs_identifer = (
+            "gmd:referenceSystemInfo/"
+            "gmd:MD_ReferenceSystem/"
+            "gmd:referenceSystemIdentifier/"
+            "gmd:RS_Identifier"
+        )
+        return self.tpl_root.find(pth_rs_identifer, self.ns)
 
     def get_rs_constraints(self):
         """Get resourceConstraints level items."""
-        pth_rs_constraints = "gmd:identificationInfo/"\
-                             "gmd:MD_DataIdentification/"\
-                             "gmd:resourceConstraints"
-        return self.tpl_root.findall(pth_rs_constraints,
-                                     self.ns)
+        pth_rs_constraints = (
+            "gmd:identificationInfo/"
+            "gmd:MD_DataIdentification/"
+            "gmd:resourceConstraints"
+        )
+        return self.tpl_root.findall(pth_rs_constraints, self.ns)
 
     # -------- XML utils ----------------------------------------------------
 
     def prettify(self, elem):
         """Return a pretty-printed XML string for the Element."""
-        rough_string = ET.tostring(elem, 'utf-8')
+        rough_string = ET.tostring(elem, "utf-8")
         reparsed = minidom.parseString(rough_string)
         return reparsed.toprettyxml(indent="  ")
+
 
 # #############################################################################
 # ### Stand alone execution #######
 # #################################
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     """Test parameters for a stand-alone run."""
     app = MetadataXML19139Fixer()
     for xml in listdir(app.fold_in):
         logger.info(xml)
         # opening the input
-        with open(path.join(app.fold_in, xml), 'r', encoding="utf-8") as in_xml:
+        with open(path.join(app.fold_in, xml), "r", encoding="utf-8") as in_xml:
             # parser
             app.tpl = ET.parse(in_xml)
             # getting the elements and sub-elements structure
@@ -309,15 +324,17 @@ if __name__ == '__main__':
             # fixes
             app.add_ds_creation_date()  # creation date
             app.add_md_character_set()  # character set
-            app.fix_srs()   # SRS
-            app.fix_cgus()   # CGUs
+            app.fix_srs()  # SRS
+            app.fix_cgus()  # CGUs
 
             # # namespaces
             # for ns in app.ns:
             #     ET.register_namespace(ns, app.ns.get(ns))
             # saving the output xml file
-            app.tpl.write(path.join(app.fold_out, xml),
-                          encoding='utf-8',
-                          xml_declaration=1,
-                          # default_namespace=app.ns.get("gmd"),
-                          method='xml')
+            app.tpl.write(
+                path.join(app.fold_out, xml),
+                encoding="utf-8",
+                xml_declaration=1,
+                # default_namespace=app.ns.get("gmd"),
+                method="xml",
+            )

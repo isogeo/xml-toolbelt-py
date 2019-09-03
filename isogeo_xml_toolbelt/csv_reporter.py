@@ -19,10 +19,10 @@ from pathlib import Path
 # ##################################
 
 
-
 # #############################################################################
 # ########## Classes ###############
 # ##################################
+
 
 class CsvReporter(object):
     """Produce CSV report. Inherits from standard 'csv.DictWriter' lib.
@@ -32,7 +32,12 @@ class CsvReporter(object):
       - https://pymotw.com/3/csv/
     """
 
-    def __init__(self, csvpath: Path = Path("./report.csv"), headers: list = ["header1", "header2"], extrahead: str = "ignore"):
+    def __init__(
+        self,
+        csvpath: Path = Path("./report.csv"),
+        headers: list = ["header1", "header2"],
+        extrahead: str = "ignore",
+    ):
         """
             Instanciate class, check parameters and add object attributes.
 
@@ -44,16 +49,21 @@ class CsvReporter(object):
         """
         # check parameters
         if not isinstance(csvpath, Path):
-            raise TypeError("CSV path must be a 'pathlib.Path' instance not {}"
-                            .format(type(csvpath)))
+            raise TypeError(
+                "CSV path must be a 'pathlib.Path' instance not {}".format(
+                    type(csvpath)
+                )
+            )
         if not isinstance(headers, list):
-            raise TypeError("Headers names must be a list, not {}"
-                            .format(type(headers)))
+            raise TypeError(
+                "Headers names must be a list, not {}".format(type(headers))
+            )
         if extrahead.lower() not in ("raise", "ignore"):
-            raise ValueError("extrahead ({}) must be 'raise' or 'ignore'"
-                             .format(extrahead))
+            raise ValueError(
+                "extrahead ({}) must be 'raise' or 'ignore'".format(extrahead)
+            )
         # attributes
-        csv.register_dialect('semicolon', delimiter=';') #create dialect
+        csv.register_dialect("semicolon", delimiter=";")  # create dialect
         self.dialect = "semicolon"
         self.extrahead = "ignore"
         self.headers = headers
@@ -66,13 +76,11 @@ class CsvReporter(object):
     def write_headers(self):
         """Write headers to the CSV."""
         with self.csvpath.open(mode="w", newline="") as csvout:
-            writer = csv.DictWriter(csvout,
-                                    dialect=self.dialect,
-                                    fieldnames=self.headers)
+            writer = csv.DictWriter(
+                csvout, dialect=self.dialect, fieldnames=self.headers
+            )
             writer.writeheader()
-        logging.debug("Headers written: {}"
-                      .format(self.headers))
-
+        logging.debug("Headers written: {}".format(self.headers))
 
     def add_unique(self, in_data: dict):
         """Add a single row to the CSV from the input data dictionary
@@ -85,13 +93,14 @@ class CsvReporter(object):
             raise TypeError
         # add line
         with self.csvpath.open(mode="a", newline="") as csvout:
-            writer = csv.DictWriter(csvout,
-                                    dialect=self.dialect,
-                                    fieldnames=self.headers,
-                                    extrasaction=self.extrahead)
+            writer = csv.DictWriter(
+                csvout,
+                dialect=self.dialect,
+                fieldnames=self.headers,
+                extrasaction=self.extrahead,
+            )
             writer.writerow(in_data)
-        logging.debug("New row added to the csv: {}"
-                      .format(self.csvpath.name))
+        logging.debug("New row added to the csv: {}".format(self.csvpath.name))
 
     def add_multiple(self, in_data: list):
         """Add a set of rows to the CSV from the input list of data dictionaries.
@@ -105,13 +114,17 @@ class CsvReporter(object):
 
         # add line
         with self.csvpath.open(mode="a", newline="") as csvout:
-            writer = csv.DictWriter(csvout,
-                                    dialect=self.dialect,
-                                    fieldnames=self.headers,
-                                    extrasaction=self.extrahead)
+            writer = csv.DictWriter(
+                csvout,
+                dialect=self.dialect,
+                fieldnames=self.headers,
+                extrasaction=self.extrahead,
+            )
             writer.writerows(in_data)
-        logging.debug("{} rows added to the csv: {}"
-                      .format(len(in_data), self.csvpath.name))
+        logging.debug(
+            "{} rows added to the csv: {}".format(len(in_data), self.csvpath.name)
+        )
+
 
 # #############################################################################
 # ### Stand alone execution #######
@@ -119,17 +132,18 @@ class CsvReporter(object):
 if __name__ == "__main__":
     """Test parameters for a stand-alone run."""
     # logging
-    logging.basicConfig(format="%(asctime)s || %(levelname)s "
-                               "|| %(module)s || %(funcName)s || %(lineno)s "
-                               "|| %(message)s",
-                        level=logging.DEBUG)
+    logging.basicConfig(
+        format="%(asctime)s || %(levelname)s "
+        "|| %(module)s || %(funcName)s || %(lineno)s "
+        "|| %(message)s",
+        level=logging.DEBUG,
+    )
     logging.debug("Standalone execution")
     # usage
-    csv_report = CsvReporter(csvpath = Path("./report.csv"),
-                             headers=["Nom", "Chemin", "Objets", "Format"])
-    d = {"Nom": "Data",
-         "Objets": 25,
-         "Format": "ISO19139"}
+    csv_report = CsvReporter(
+        csvpath=Path("./report.csv"), headers=["Nom", "Chemin", "Objets", "Format"]
+    )
+    d = {"Nom": "Data", "Objets": 25, "Format": "ISO19139"}
     csv_report.add_unique(d)
 
     l = [d, d, d]
