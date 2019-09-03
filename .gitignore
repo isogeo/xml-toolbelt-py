@@ -135,3 +135,6 @@ junit/*
 *.xml
 
 tests/fixtures/api_search_*.json
+
+# outputs
+*.csv
