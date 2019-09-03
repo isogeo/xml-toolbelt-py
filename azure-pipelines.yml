@@ -102,7 +102,7 @@ jobs:
   - script: |
       python -m pip install -U pip setuptools wheel
       python -m pip install -U -r requirements.txt
-      python -m pip install -U twine
+      python -m pip install -U twine wheel
     displayName: 'Install dependencies'
 
   - script: python setup.py egg_info
@@ -120,11 +120,11 @@ jobs:
       path: $(System.DefaultWorkingDirectory)/dist
       artifact: 'IsogeoXmlToolbelt_$(Build.SourceVersion)'
 
-  - task: TwineAuthenticate@0
-    # see: https://dev.azure.com/isogeo/Python%20SDK/_settings/adminservices?resourceId=7650b333-6c8a-4c56-a839-a33242255c16&resource=%5Bobject%20Object%5D&_a=resources
+  - task: TwineAuthenticate@1
     inputs:
-      externalFeeds: 'PyPi_Isogeo'
+      pythonUploadServiceConnection: 'PyPi_Isogeo'
 
-  - script: twine upload $(System.DefaultWorkingDirectory)/dist/* -r pypi --config-file $(PYPIRC_PATH)
+  - script: |
+      python -m twine upload -r pypi --config-file $(PYPIRC_PATH) dist/*
     continueOnError: true
     displayName: "Upload to PyPi"
