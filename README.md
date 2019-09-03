@@ -1,13 +1,16 @@
 # Isogeo XML Toolbelt
 
-[![Build Status](https://travis-ci.org/isogeo/isogeo-xml-toolbelt.svg?branch=master)](https://travis-ci.org/isogeo/isogeo-xml-toolbelt) [![codecov](https://codecov.io/gh/isogeo/isogeo-xml-toolbelt/branch/master/graph/badge.svg)](https://codecov.io/gh/isogeo/isogeo-xml-toolbelt) [![Documentation Status](https://readthedocs.org/projects/isogeo-xml-toolbelt/badge/?version=latest)](https://isogeo-xml-toolbelt.readthedocs.io/en/latest/?badge=latest)
+[![Documentation Status](https://readthedocs.org/projects/isogeo-xml-toolbelt/badge/?version=latest)](https://isogeo-xml-toolbelt.readthedocs.io/en/latest/?badge=latest)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/python/black)
 
-Scripts toolbox to manage metadata XML to be imported into Isogeo.
+Set of tools and scripts to handle geographic metadata stored in XML as ISO (19139 and 19110) to be imported into Isogeo.
 
-For more information, [see the wiki](https://github.com/isogeo/isogeo-xml-toolbelt/wiki).
+For more information, [see the wiki](https://github.com/isogeo/xml-toolbelt-py/wiki).
 
-vsc extensions  :
+## Usage in a nutshell
 
-https://marketplace.visualstudio.com/items?itemName=GrapeCity.gc-excelviewer
+1. Install:
 
-
+    ```powershell
+    pip install isogeo-xml-toolbelt
+    ```
