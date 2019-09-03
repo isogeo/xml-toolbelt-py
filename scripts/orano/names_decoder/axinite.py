@@ -1,4 +1,3 @@
-
 import xml.etree.ElementTree as ET
 
 tree = ET.parse("axinite.xml")
@@ -12,7 +11,7 @@ scales = root[2]
 # ##################################
 
 
-##countries 
+##countries
 # for country in countries:
 #     code_country = country.get('code')
 #     if len(code_country) != 2:
@@ -46,9 +45,9 @@ scales = root[2]
 #         if len(code_theme) == 4:
 #             print(name_maintheme + "," + code_theme + "," + name_theme)
 
-#scales
+# scales
 for scale in scales:
-    name_scale = scale.get('desc')
-    code_scale = scale.get('code')
+    name_scale = scale.get("desc")
+    code_scale = scale.get("code")
     if len(code_scale) != 2:
         print(name_scale, len(code_scale), code_scale)
