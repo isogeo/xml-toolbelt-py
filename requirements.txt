@@ -13,10 +13,19 @@ setuptools
 wheel
 
 # XML parsing
-lxml==4.2.*
+lxml==4.4.*
 
 # command-line
 Click==7.*
 
 # utils
-arrow==0.12.*
+arrow==0.14.*
+
+# development
+black
+flake8
+pre-commit
+pylint
+pytest-cov
+python-dotenv
+sphinx
