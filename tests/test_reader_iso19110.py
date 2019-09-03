@@ -44,7 +44,6 @@ class TestReaderIso19110(unittest.TestCase):
         # fixtures
         self.li_fixtures_repo = sorted(Path(r"tests/fixtures/iso19110").glob("*.xml"))
 
-
     def tearDown(self):
         """Executed after each test."""
         pass
@@ -57,15 +56,15 @@ class TestReaderIso19110(unittest.TestCase):
             md = MetadataIso19110(i.resolve())
             # self.assertEqual(md.asDict().get("name"), md.name)
             # self.assertEqual(md.asDict().get("title"), md.name)
-            print(
-                "filename": md.filename,
-                "fileIdentifier": md.fileIdentifier,
-                "name": md.name,
-                "title": md.name,
-                "fieldOfApplication": md.fieldOfapplication,
-                "date": md.date,
-                "OrganisationName": md.OrganisationName,
-                "contact": md.contact,
-                "featureTypes": md.featureTypes,
-                "featureAttributes": md.featureAttributes,
-            )
+            # print(
+            #     "filename": md.filename,
+            #     "fileIdentifier": md.fileIdentifier,
+            #     "name": md.name,
+            #     "title": md.name,
+            #     "fieldOfApplication": md.fieldOfapplication,
+            #     "date": md.date,
+            #     "OrganisationName": md.OrganisationName,
+            #     "contact": md.contact,
+            #     "featureTypes": md.featureTypes,
+            #     "featureAttributes": md.featureAttributes,
+            # )

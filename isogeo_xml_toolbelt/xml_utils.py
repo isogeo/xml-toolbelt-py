@@ -41,7 +41,6 @@ class XmlUtils(object):
         """Instanciation."""
         super(XmlUtils, self).__init__()
 
-
     def xmlGetTextNodes(self, doc: etree._ElementTree, xpath: str, namespaces: dict):
         """Shorthand to retrieve serialized text nodes matching a specific xpath.
 
@@ -51,8 +50,10 @@ class XmlUtils(object):
         """
         return ", ".join(doc.xpath(xpath, namespaces=namespaces))
 
-    def xmlGetTextTag(self, doc: etree._ElementTree, xpath: str, namespaces: dict, key: str):
-        
+    def xmlGetTextTag(
+        self, doc: etree._ElementTree, xpath: str, namespaces: dict, key: str
+    ):
+
         """Function to get information in tag when information isn't in nodes matching a specific xpath.
 
         :param lxml.etree._ElementTree doc: XML element to parse
@@ -64,8 +65,8 @@ class XmlUtils(object):
         tag = doc.xpath(xpath, namespaces=namespaces)
         if len(tag) > 0:
             tag = tag[0].get(key, None)
-        else: 
-            tag = "None" 
+        else:
+            tag = "None"
 
         return tag
 
@@ -88,7 +89,6 @@ class XmlUtils(object):
             logging.error("Date parsing error: " + dates_as_str)
             return None
 
-    
 
 # #############################################################################
 # ### Stand alone execution #######

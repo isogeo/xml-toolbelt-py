@@ -44,7 +44,6 @@ class TestReaderIso19139(unittest.TestCase):
         # fixtures
         self.li_fixtures_repo = sorted(Path(r"tests/fixtures/iso19139").glob("*.xml"))
 
-
     def tearDown(self):
         """Executed after each test."""
         pass
