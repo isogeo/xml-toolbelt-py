@@ -86,7 +86,7 @@ jobs:
   steps:
   - task: GitHubRelease@0
     inputs:
-      gitHubConnection: 'github_repo_access'
+      gitHubConnection: 'github_isogeo'
       repositoryName: 'isogeo/xml-toolbelt-py'
       action: 'create'
       target: '$(Build.SourceVersion)'
@@ -123,8 +123,8 @@ jobs:
   - task: TwineAuthenticate@0
     # see: https://dev.azure.com/isogeo/Python%20SDK/_settings/adminservices?resourceId=7650b333-6c8a-4c56-a839-a33242255c16&resource=%5Bobject%20Object%5D&_a=resources
     inputs:
-      externalFeeds: 'PyPi'
+      externalFeeds: 'PyPi_Isogeo'
 
-  - script: twine upload $(System.DefaultWorkingDirectory)/dist/* --config-file $(PYPIRC_PATH)
+  - script: twine upload $(System.DefaultWorkingDirectory)/dist/* -r pypi --config-file $(PYPIRC_PATH)
     continueOnError: true
     displayName: "Upload to PyPi"
