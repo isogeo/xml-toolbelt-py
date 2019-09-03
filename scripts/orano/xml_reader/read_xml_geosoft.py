@@ -1,12 +1,22 @@
+# -*- coding: UTF-8 -*-
+#! python3
+
+
+# #############################################################################
+# ###### Libraries #########
+# ##########################
+
 # Standard library
 import logging
 from pathlib import Path
 
-print(__name__)
-print(__package__)
-# submodules
-from ....isogeo_xml_toolbelt import MetadataIso19139
-from ....isogeo_xml_toolbelt import CsvReporter
+# Isogeo XML toolbelt
+from isogeo_xml_toolbelt.readers import MetadataIso19139
+from isogeo_xml_toolbelt.reporters import CsvReporter
+
+# ##############################################################################
+# ############ Globals ############
+# #################################
 
 # logging
 logging.basicConfig(
