@@ -14,14 +14,8 @@ Welcome to Isogeo - XML Toolbelt's documentation!
 .. moduleauthor:: Isogeo
 
 :Author: Isogeo
-:Source code: https://github.com/Isogeo/isogeo-xml-toolbelt/
-:Issues: https://github.com/Isogeo/isogeo-xml-toolbelt/issues
-
-Package modules
-+++++++++++++++
-
-.. toctree::
-    _apidoc/modules
+:Source code: https://github.com/isogeo/xml-toolbelt-py/
+:Issues: https://github.com/isogeo/xml-toolbelt-py/issues
 
 Indices and tables
 ==================
@@ -29,3 +23,9 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
+
+Package modules
++++++++++++++++
+
+.. toctree::
+    _apidoc/modules
