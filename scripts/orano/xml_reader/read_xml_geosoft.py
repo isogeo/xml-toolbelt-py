@@ -2,9 +2,11 @@
 import logging
 from pathlib import Path
 
+print(__name__)
+print(__package__)
 # submodules
-from csv_reporter import CsvReporter
-from reader_iso19139 import MetadataIso19139
+from ....isogeo_xml_toolbelt import MetadataIso19139
+from ....isogeo_xml_toolbelt import CsvReporter
 
 # logging
 logging.basicConfig(format="%(asctime)s || %(levelname)s "
@@ -15,7 +17,7 @@ logging.basicConfig(format="%(asctime)s || %(levelname)s "
 logging.debug("Standalone execution")
 
 # usage
-csv_report = CsvReporter(csvpath = Path("./scripts/orano/report_xml_orano.csv"),
+csv_report = CsvReporter(csvpath = Path(".report_xml_orano.csv"),
                     headers=["title", "abstract", "keywords", "date", 
                             "resolution", "scale", "contact", "organisation"])
 
@@ -32,7 +34,7 @@ for xml_path in li_fixtures_xml:
     # print(md.asDict().get("title"), md.asDict().get("contacts"))
     
     d = {"title": md.title,
-        "abstract": md.abstract,
+        "abstract": md.abstract.encode('utf-8'),
         "keywords": md.keywords,
         "date": md.date,
         "resolution": md.resolution,
