@@ -75,7 +75,7 @@ class CsvReporter(object):
 
     def write_headers(self):
         """Write headers to the CSV."""
-        with self.csvpath.open(mode="w", newline="") as csvout:
+        with self.csvpath.open(mode="w", newline="",  encoding="utf-8") as csvout:
             writer = csv.DictWriter(
                 csvout, dialect=self.dialect, fieldnames=self.headers
             )
@@ -92,13 +92,14 @@ class CsvReporter(object):
         if not isinstance(in_data, dict):
             raise TypeError
         # add line
-        with self.csvpath.open(mode="a", newline="") as csvout:
+        with self.csvpath.open(mode="a", newline="",  encoding="utf-8") as csvout:
             writer = csv.DictWriter(
                 csvout,
                 dialect=self.dialect,
                 fieldnames=self.headers,
-                extrasaction=self.extrahead,
-            )
+                extrasaction=self.extrahead
+                )
+
             writer.writerow(in_data)
         logging.debug("New row added to the csv: {}".format(self.csvpath.name))
 
@@ -113,7 +114,7 @@ class CsvReporter(object):
             raise TypeError
 
         # add line
-        with self.csvpath.open(mode="a", newline="") as csvout:
+        with self.csvpath.open(mode="a", newline="", encoding="utf-8") as csvout:
             writer = csv.DictWriter(
                 csvout,
                 dialect=self.dialect,

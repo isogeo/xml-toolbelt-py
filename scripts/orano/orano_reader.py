@@ -1,5 +1,6 @@
-# -*- coding: UTF-8 -*-
+# coding: utf8
 #! python3
+
 
 # #############################################################################
 # ###### Libraries #########
@@ -8,33 +9,26 @@
 # Standard library
 import logging
 from pathlib import Path
-import chardet
 
 # Isogeo XML toolbelt
 from isogeo_xml_toolbelt.readers import MetadataIso19139
 from isogeo_xml_toolbelt.reporters import CsvReporter
 
-# ##############################################################################
-# ############ Globals ############
-# #################################
+# Modules
+from names_decoder.decode_name import decode_name
 
-# logging
-logging.basicConfig(
-    format="%(asctime)s || %(levelname)s "
-    "|| %(module)s || %(funcName)s || %(lineno)s "
-    "|| %(message)s",
-    level=logging.DEBUG,
-)
-
-logging.debug("Standalone execution")
+# environment vars
+load_dotenv("orano.env", override=True)
 
 # usage
 csv_report = CsvReporter(
-    csvpath=Path("./report_xml_orano.csv"),
+    csvpath=Path(".report_orano.csv"),
     headers=[
         "title",
         "abstract",
         "keywords",
+        "country",
+        "region",
         "date",
         "resolution",
         "scale",
@@ -48,10 +42,12 @@ li_fixtures_xml = sorted(
         r"/Users/LéoDARENGOSSE/ISOGEO/SIG - Documents/CLIENTS/85_ORANO/Echantillon"
     ).glob("**/*.xml")
 )
+
 for xml_path in li_fixtures_xml:
     md = MetadataIso19139(xml=xml_path)
+    decode = decode_name(md.title, xml_path)
 
-     # print (md.title)
+    # print (md.title)
     # contacts =
 
     for contact in md.list_contacts:
@@ -61,17 +57,14 @@ for xml_path in li_fixtures_xml:
 
     d = {
         "title": md.title,
-        "abstract": md.abstract,
+        "abstract": md.abstract.encode("utf-8"),
         "keywords": '|'.join(md.keywords), #list to char with delimeter "|"
         "date": md.date,
         "resolution": md.resolution,
         "scale": md.scale.replace(",", ""),
         "contact": name_contact,
         "organisation": organisation,
-        "path": xml_path
     }
 
     print(d)
     csv_report.add_unique(d)
-
-    # print(xml_path.resolve(), test.storageType)

@@ -48,7 +48,7 @@ def list_filenames_xml_from_directory(path: str) -> list:
     return list_filenames_xml
 
 
-def decode_name(name: str, config: str, path: str) -> dict:
+def decode_name(name: str, path: str) -> dict:
 
     # #############################################################################
     # ######## Intialize variable #################
@@ -104,7 +104,7 @@ def decode_name(name: str, config: str, path: str) -> dict:
     # ######## Parse configuration XML #################
     # ##################################
 
-    tree = ET.parse(config)
+    tree = ET.parse("axinite.xml")
     root = tree.getroot()
     countries = root[0]
     mainthemes = root[1]
@@ -246,7 +246,6 @@ def decode_name(name: str, config: str, path: str) -> dict:
 
 if __name__ == "__main__":
 
-    config = "axinite.xml"
     path = "\\Users\LéoDARENGOSSE\ISOGEO\SIG - Documents\CLIENTS\85_ORANO\Echantillon"
 
     # write csv with decodage result
@@ -277,7 +276,7 @@ if __name__ == "__main__":
         for dict_name_path in list_names_path:
             name = dict_name_path.get("name")
             path = dict_name_path.get("path")
-            result = decode_name(name, config, path)
+            result = decode_name(name, path)
             country = result.get("Country")
             if (
                 country is None

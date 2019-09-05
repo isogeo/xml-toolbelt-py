@@ -9,7 +9,7 @@
         "--ignore=E24,E265,E501,W504",
         "--verbose"
     ],
-    "python.pythonPath": ".venv\\Scripts\\python.exe",
+    "python.pythonPath": ".virtualenv\\Scripts\\python.exe",
     "python.testing.pytestEnabled": true,
     "python.testing.pytestArgs": [
         "-c",
