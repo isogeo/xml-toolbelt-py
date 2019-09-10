@@ -17,11 +17,12 @@ import logging
 import csv
 import os.path
 
+
 # #############################################################################
 # ######## Intialize log #################
 # ##################################
 logging.basicConfig(
-    filename="log.log",
+    filename="scripts/orano/names_decoder/log.log",
     format="%(asctime)s || %(funcName)s || %(levelname)s || %(message)s",
     level=logging.DEBUG,
 )
@@ -104,7 +105,7 @@ def decode_name(name: str, path: str) -> dict:
     # ######## Parse configuration XML #################
     # ##################################
 
-    tree = ET.parse("axinite.xml")
+    tree = ET.parse("scripts/orano/names_decoder/axinite.xml")
     root = tree.getroot()
     countries = root[0]
     mainthemes = root[1]
@@ -249,7 +250,7 @@ if __name__ == "__main__":
     path = "\\Users\LéoDARENGOSSE\ISOGEO\SIG - Documents\CLIENTS\85_ORANO\Echantillon"
 
     # write csv with decodage result
-    with open("result.csv", "w", newline="") as csvfile:
+    with open("scripts/orano/names_decoder/name_decoder_result.csv", "w", newline="") as csvfile:
         fieldnames = [
             "Name",
             "Country",
@@ -273,7 +274,7 @@ if __name__ == "__main__":
 
         counter_csv = 0
         counter_undecodable = 0
-        for dict_name_path in list_names_path:
+        for dict_name_path in list_names_path:        
             name = dict_name_path.get("name")
             path = dict_name_path.get("path")
             result = decode_name(name, path)

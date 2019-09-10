@@ -8,7 +8,11 @@
 # Standard library
 import logging
 from pathlib import Path
+from os import environ
 import chardet
+
+# 3rd party
+from dotenv import load_dotenv
 
 # Isogeo XML toolbelt
 from isogeo_xml_toolbelt.readers import MetadataIso19139
@@ -18,6 +22,9 @@ from isogeo_xml_toolbelt.reporters import CsvReporter
 # ############ Globals ############
 # #################################
 
+# environment vars
+load_dotenv("./orano.env", override=True)
+
 # logging
 logging.basicConfig(
     format="%(asctime)s || %(levelname)s "
@@ -26,11 +33,9 @@ logging.basicConfig(
     level=logging.DEBUG,
 )
 
-logging.debug("Standalone execution")
-
 # usage
 csv_report = CsvReporter(
-    csvpath=Path("./report_xml_orano.csv"),
+    csvpath=Path("scripts/orano/xml_reader/xml_reader_result.csv"),
     headers=[
         "title",
         "abstract",
@@ -43,15 +48,15 @@ csv_report = CsvReporter(
     ],
 )
 
+print(environ.get("PATH_TO_ANALYSE"))
+
 li_fixtures_xml = sorted(
-    Path(
-        r"/Users/LéoDARENGOSSE/ISOGEO/SIG - Documents/CLIENTS/85_ORANO/Echantillon"
-    ).glob("**/*.xml")
+    Path("/Users/LéoDARENGOSSE/ISOGEO/SIG - Documents/CLIENTS/85_ORANO/Echantillon").glob("**/*.xml")
 )
 for xml_path in li_fixtures_xml:
     md = MetadataIso19139(xml=xml_path)
 
-     # print (md.title)
+    # print (md.title)
     # contacts =
 
     for contact in md.list_contacts:
@@ -61,17 +66,17 @@ for xml_path in li_fixtures_xml:
 
     d = {
         "title": md.title,
-        "abstract": md.abstract,
+        "abstract": md.abstract.encode("utf8"),
         "keywords": '|'.join(md.keywords), #list to char with delimeter "|"
         "date": md.date,
-        "resolution": md.resolution,
+        "resolution": md.resolution.split("m")[0], #delete unity
         "scale": md.scale.replace(",", ""),
         "contact": name_contact,
         "organisation": organisation,
         "path": xml_path
     }
 
-    print(d)
+    # print(d)
     csv_report.add_unique(d)
 
     # print(xml_path.resolve(), test.storageType)
