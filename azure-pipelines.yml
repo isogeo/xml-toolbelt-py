@@ -76,6 +76,17 @@ stages:
       - group: QA
 
     steps:
+
+    # no need for source code, use the artifact
+    - checkout: none
+
+    - task: DownloadPipelineArtifact@2
+      displayName: "Download artifact previously saved"
+      inputs:
+        buildType: "current"
+        artifact: "FORMATTED_$(pyPiPackageName)_$(Build.SourceBranchName)_$(Build.BuildId)"
+        targetPath: "$(System.DefaultWorkingDirectory)"
+      
     - task: UsePythonVersion@0
       inputs:
         versionSpec: '3.7'
@@ -83,12 +94,12 @@ stages:
         addToPath: true
 
     - script: |
-        python -m pip install -U pip
-        python -m pip install -U -r ./requirements.txt
+        python -m pip install -U pip --cache-dir ./.pipcache
+        python -m pip install -U -r ./requirements.txt --cache-dir ./.pipcache
       displayName: 'Install dependencies'
 
     - script: |
-        pytest
+        python -m pytest -c ./setup.cfg
       displayName: 'Tests and coverage - Pytest'
 
     - task: PublishTestResults@2
@@ -104,24 +115,30 @@ stages:
         codeCoverageTool: Cobertura
         summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/coverage.xml'
 
+
+
   # BUILD and PUBLISH
-  # only with a tagged commit (see: https://github.com/MicrosoftDocs/vsts-docs/issues/3281)
-  - job: 'Publish'
-    dependsOn: 'Test'
+- stage: Deploy
+  displayName: Build and Deploy
+  dependsOn: Test
+  condition: succeeded()
+
+  jobs:
+  # BUILD Python package
+  - job: 'Build'
     pool:
       vmImage: $(vmImageName)
-    condition:
-      contains(variables['Build.SourceBranch'], 'tags')
 
     steps:
-    - task: GitHubRelease@0
+    # no need for source code
+    - checkout: none
+
+    - task: DownloadPipelineArtifact@2
+      displayName: "Download artifact previously saved"
       inputs:
-        gitHubConnection: 'github_isogeo'
-        repositoryName: 'isogeo/xml-toolbelt-py'
-        action: 'create'
-        target: '$(Build.SourceVersion)'
-        tagSource: 'auto'
-        compareWith: 'lastFullRelease'
+        buildType: "current"
+        artifact: "FORMATTED_$(pyPiPackageName)_$(Build.SourceBranchName)_$(Build.BuildId)"
+        targetPath: "$(System.DefaultWorkingDirectory)"
 
     - task: UsePythonVersion@0
       inputs:
@@ -130,9 +147,9 @@ stages:
         addToPath: true
 
     - script: |
-        python -m pip install -U pip setuptools wheel
-        python -m pip install -U -r requirements.txt
-        python -m pip install -U twine wheel
+        python -m pip install -U pip --cache-dir ./.pipcache
+        python -m pip install -U -r ./requirements.txt --cache-dir ./.pipcache
+        python -m pip install -U twine
       displayName: 'Install dependencies'
 
     - script: python setup.py egg_info
@@ -145,16 +162,80 @@ stages:
       displayName: 'Build wheel'
 
     - task: PublishPipelineArtifact@1
-      displayName: 'Publish Artifact: Isogeo XML Toolbelt'
+      displayName: 'Publish Artifact: Isogeo Python SDK package'
       inputs:
         path: $(System.DefaultWorkingDirectory)/dist
-        artifact: 'IsogeoXmlToolbelt_$(Build.SourceVersion)'
+        artifact: '$(pyPiPackageName)_$(Build.SourceVersion)'
+
+  # PUBLISH TO GITHUB
+  # only with a tagged commit (see: https://github.com/MicrosoftDocs/vsts-docs/issues/3281)
+  - job: 'DeployGithub'
+    dependsOn: Build
+    # only with a tagged commit (see: https://github.com/MicrosoftDocs/vsts-docs/issues/3281)
+    condition: |
+      and
+      (
+        succeeded(),
+        contains(variables['Build.SourceBranch'], 'tags')
+      )
+    pool:
+      vmImage: $(vmImageName)
+
+    steps:
+    # no need for source code
+    - checkout: none
+
+    - task: DownloadPipelineArtifact@2
+      displayName: "Download artifact previously saved"
+      inputs:
+        buildType: "current"
+        artifact: '$(pyPiPackageName)_$(Build.SourceVersion)'
+        targetPath: "$(System.DefaultWorkingDirectory)"
+
+    # publish to Github
+    - task: GitHubRelease@1
+      displayName: "Publish tagged code as Github Release"
+      inputs:
+        gitHubConnection: 'github.com_Guts'
+        repositoryName: '$(Build.Repository.Name)'
+        action: 'create'
+        target: '$(Build.SourceVersion)'
+        tagSource: 'gitTag'
+        assets: '$(System.DefaultWorkingDirectory)/*'
+        changeLogCompareToRelease: 'lastFullRelease'
+        changeLogType: 'commitBased'
+
+  # PUBLISH TO the Python Package Index (PyPi)
+  # only with a tagged commit (see: https://github.com/MicrosoftDocs/vsts-docs/issues/3281)        
+  - job: 'DeployPyPi'  
+    dependsOn: Build
+    condition: |
+      and
+      (
+        succeeded(),
+        contains(variables['Build.SourceBranch'], 'tags')
+      )
+    pool:
+      vmImage: $(vmImageName)
+
+    steps:
+    # no need for source code
+    - checkout: none
+
+    - task: DownloadPipelineArtifact@2
+      displayName: "Download artifact previously saved"
+      inputs:
+        buildType: "current"
+        artifact: '$(pyPiPackageName)_$(Build.SourceVersion)'
+        targetPath: "$(System.DefaultWorkingDirectory)/dist/"
 
     - task: TwineAuthenticate@1
       inputs:
-        pythonUploadServiceConnection: 'PyPi_Isogeo'
+        pythonUploadServiceConnection: 'pypi'
 
+    # see: https://docs.microsoft.com/en-us/azure/devops/pipelines/library/service-endpoints?view=azure-devops&tabs=yaml#sep-python-upload
     - script: |
-        python -m twine upload -r pypi --config-file $(PYPIRC_PATH) dist/*
+        python -m pip install -U pip twine --cache-dir ./.pipcache
+        python -m twine upload ./dist/* -r pypi --config-file $(PYPIRC_PATH) --verbose --skip-existing
       continueOnError: true
       displayName: "Upload to PyPi"
