@@ -6,13 +6,16 @@ verify_ssl = true
 [dev-packages]
 pip = "*"
 setuptools = "*"
-black = "==19.3b0"
-pytest = "*"
+black = "==19.10b0"
+flake8 = "*"
 pylint = "*"
+pytest = "<5.1"
+pytest-cov = "*"
 sphinx = "*"
+wheel = "*"
 
 [packages]
-arrow = "*"
+arrow = "==0.14.*"
 click = "*"
 lxml = "*"
 
