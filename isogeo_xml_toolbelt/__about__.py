@@ -1,17 +1,22 @@
-# Metadata bout the package to easily retrieve informations about it.
-# see: https://packaging.python.org/guides/single-sourcing-package-version/
+#! python3  # noqa: E265
 
+"""
+    Metadata about the package to easily retrieve informations.
+    see: https://packaging.python.org/guides/single-sourcing-package-version/
+"""
+
+# standard library
 from datetime import date
 
 __all__ = [
-    "__title__",
-    "__summary__",
-    "__uri__",
-    "__version__",
     "__author__",
+    "__copyright__",
     "__email__",
     "__license__",
-    "__copyright__",
+    "__summary__",
+    "__title__",
+    "__uri__",
+    "__version__",
 ]
 
 

@@ -17,7 +17,7 @@ import pathlib
 from setuptools import find_packages, setup
 
 # package (to get version)
-from isogeo_xml_toolbelt.__about__ import __version__, __summary__
+from isogeo_xml_toolbelt import __about__
 
 # SETUP ######################################################################
 
@@ -31,15 +31,15 @@ README = (HERE / "README.md").read_text()
 setup(
     # meta
     name="isogeo-xml-toolbelt",
-    version=__version__,
-    author="Isogeo",
-    author_email="support@isogeo.com",
-    description=__summary__,
+    version=__about__.__version__,
+    author=__about__.__author__,
+    author_email=__about__.__email__,
+    description=__about__.__summary__,
     long_description=README,
     long_description_content_type="text/markdown",
-    keywords="GIS metadata INSPIRE Isogeo API REST geographical data ISO19139 XML geonetwork",
+    keywords="GIS metadata INSPIRE Isogeo API REST geographical data ISO19110 ISO19139 XML geonetwork",
     license="LGPL3",
-    url="https://github.com/isogeo/xml-toolbelt-py/",
+    url=__about__.__uri__,
     project_urls={
         "Docs": "https://isogeo-xml-toolbelt.readthedocs.io/",
         "Bug Reports": "https://github.com/isogeo/xml-toolbelt-py/issues/",
@@ -49,7 +49,7 @@ setup(
     install_requires=["lxml==4.4.*"],
     extras_require={
         "dev": ["black", "python-dotenv"],
-        "test": ["codecov", "coverage", "pytest", "pytest-cov"],
+        "test": ["pytest", "pytest-cov"],
     },
     python_requires=">=3.6, <4",
     # packaging
