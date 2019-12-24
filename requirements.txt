@@ -1,19 +1,16 @@
+-i https://pypi.org/simple
+
 # Common requirements
 # -----------------------
-# This file collects all required third-party applications that are needed
-# to run this project. Later you can install all these apps in a row
-# using pip. Example:
-#
-#     pip install -r requirements.txt
-#
 
-
-# basics
+pip
 setuptools
 wheel
 
-# XML parsing
-lxml==4.4.*
+# Project requirements
+# -----------------------
+lxml==4.4.*  # XML parsing
+python-dotenv
 
 # command-line
 Click==7.*
@@ -21,11 +18,11 @@ Click==7.*
 # utils
 arrow==0.14.*
 
-# development
+# Dev requirements
+# -----------------------
 black
 flake8
 pre-commit
 pylint
 pytest-cov
-python-dotenv
 sphinx
