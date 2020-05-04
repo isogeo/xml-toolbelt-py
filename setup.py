@@ -46,7 +46,7 @@ setup(
         "Source": "https://github.com/isogeo/xml-toolbelt-py/",
     },
     # dependencies
-    install_requires=["lxml==4.4.*"],
+    install_requires=["lxml>=4.4,<4.6"],
     extras_require={
         "dev": ["black", "python-dotenv"],
         "test": ["pytest", "pytest-cov"],
