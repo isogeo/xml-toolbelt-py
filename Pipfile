@@ -15,7 +15,7 @@ sphinx = "*"
 wheel = "*"
 
 [packages]
-arrow = "==0.14.*"
+arrow = "==0.16.*"
 click = "*"
 lxml = "*"
 
