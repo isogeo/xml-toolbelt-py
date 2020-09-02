@@ -8,16 +8,16 @@ pip = "*"
 setuptools = "*"
 black = "==19.10b0"
 flake8 = "*"
-pylint = "*"
-pytest = "<5.1"
+pylint = "==2.6.0"
+pytest = "<6.1"
 pytest-cov = "*"
-sphinx = "*"
-wheel = "*"
+sphinx = "==3.2.1"
+wheel = "==0.35.1"
 
 [packages]
-arrow = "==0.14.*"
-click = "*"
-lxml = "*"
+arrow = "==0.16.*"
+click = "==7.1.2"
+lxml = "==4.5.2"
 
 [requires]
 python_version = "3"
