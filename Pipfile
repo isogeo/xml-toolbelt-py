@@ -11,7 +11,7 @@ flake8 = "*"
 pylint = "==2.6.0"
 pytest = "<6.1"
 pytest-cov = "*"
-sphinx = "==3.2.1"
+sphinx = "==3.5.4"
 wheel = "==0.35.1"
 
 [packages]
